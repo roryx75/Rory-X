@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Rory X</title>
+    <style>
+        body { 
+            background: #000; 
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+
+        .card { 
+            background: #1c1c1e; 
+            padding: 40px 30px; 
+            border-radius: 28px; 
+            width: 350px; 
+            text-align: center; 
+            border: 1px solid #333; 
+        }
+
+        #itemName { color: #8e8e93; font-size: 14px; text-transform: uppercase; margin-bottom: 8px; }
+        .price { font-size: 48px; font-weight: 700; margin-bottom: 30px; }
+
+        input { 
+            width: 90%; padding: 14px; margin: 6px 0; border-radius: 12px; 
+            border: 1px solid #3a3a3c; background: #2c2c2e; color: white; font-size: 16px; outline: none; 
+        }
+
+        /* The Multi-Pay Button */
+        #payButton { 
+            background: white; 
+            border: none; 
+            padding: 12px; 
+            width: 100%; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            margin-top: 25px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 15px; /* Space between the two logos */
+            transition: transform 0.1s;
+        }
+
+        #payButton:active { transform: scale(0.97); }
+
+        .logo-img { height: 24px; pointer-events: auto; cursor: pointer; transition: opacity 0.2s; }
+        .logo-img:hover { opacity: 0.7; }
+
+        /* Loading Overlay */
+        #loadingOverlay { 
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+            background:rgba(0,0,0,0.97); flex-direction:column; justify-content:center; align-items:center; z-index:1000; 
+        }
+
+        .spinner { 
+            width: 44px; height: 44px; border: 4px solid #333; border-top: 4px solid #fff; 
+            border-radius: 50%; animation: spin 0.8s linear infinite; 
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #statusText { margin-top: 25px; font-size: 18px; font-weight: 500; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div id="itemName">Loading...</div>
+        <div class="price" id="itemPrice">£0.00</div>
+        
+        <input type="text" id="fName" placeholder="First Name">
+        <input type="text" id="lName" placeholder="Last Name">
+        <input type="text" id="tutor" placeholder="Tutor Group">
+
+        <button id="payButton">
+            <img src="applepay.png" class="logo-img" id="appleClick" alt="Apple Pay">
+            <div style="width: 1px; height: 20px; background: #ddd;"></div> <img src="googlepay.svg" class="logo-img" id="googleClick" alt="Google Pay">
+        </button>
+    </div>
+
+    <div id="loadingOverlay">
+        <div class="spinner" id="mainSpinner"></div>
+        <div id="statusText">Verifying...</div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const product = params.get('item') || "Rory X Product";
+        const cost = params.get('price') || "0.00";
+        document.getElementById('itemName').innerText = product;
+        document.getElementById('itemPrice').innerText = "£" + cost;
+
+        let selectedProvider = "";
+
+        // Function to process payment
+        function startPayment(provider) {
+            const first = document.getElementById('fName').value.trim();
+            const last = document.getElementById('lName').value.trim();
+            const group = document.getElementById('tutor').value.trim();
+
+            if(!first || !last || !group) { alert("Please fill in your details."); return; }
+
+            selectedProvider = provider; // Store whether it was Apple or Google
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            const order = {
+                customer: first + " " + last,
+                tutor: group,
+                item: product,
+                price: "£" + cost,
+                method: selectedProvider,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+
+            // Save for Admin Portal
+            let orders = JSON.parse(localStorage.getItem('rory_x_orders')) || [];
+            orders.push(order);
+            localStorage.setItem('rory_x_orders', JSON.stringify(orders));
+
+            // Send to Discord
+            fetch("https://discord.com/api/webhooks/1501257786225463466/cFnxQMJUI1UMXrmf1eGS1NWKxp6BMdMrLDQ0WZIm-D5oR176r8qmP_Ihn3gY13ivO1Ja", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "✅ New Order Approved",
+                        description: `Payment via **${selectedProvider}**`,
+                        color: selectedProvider === "Apple Pay" ? 5025616 : 4359924, 
+                        fields: [
+                            { name: "Customer", value: order.customer, inline: true },
+                            { name: "Tutor", value: order.tutor, inline: true },
+                            { name: "Product", value: order.item, inline: false },
+                            { name: "Amount", value: order.price, inline: true }
+                        ],
+                        footer: { text: "Rory X Store • " + order.time }
+                    }]
+                })
+            });
+
+            // Final Animation with custom message
+            setTimeout(() => {
+                document.getElementById('mainSpinner').style.display = 'none';
+                document.getElementById('statusText').innerHTML = `
+                    <span style="color:#34c759; font-size:22px; font-weight:bold;">${selectedProvider} Approved Your Purchase!</span><br><br>
+                    <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
+                `;
+            }, 2500);
+        }
+
+        // Detect which logo is clicked
+        document.getElementById('appleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Apple Pay"); });
+        document.getElementById('googleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Google Pay"); });
+        document.getElementById('payButton').addEventListener('click', () => { if(!selectedProvider) startPayment("Apple Pay"); });
+    </script>
+</body>
+</html>

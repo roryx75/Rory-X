@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal | Rory X</title>
+    <style>
+        body { background: #000; color: white; font-family: -apple-system, sans-serif; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .order-table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: #8e8e93; font-size: 12px; text-transform: uppercase; padding: 15px; border-bottom: 1px solid #333; }
+        td { padding: 20px 15px; border-bottom: 1px solid #1c1c1e; font-size: 15px; }
+        .status-tag { color: #34c759; font-weight: 600; background: rgba(52, 199, 89, 0.1); padding: 5px 10px; border-radius: 6px; font-size: 12px; }
+        .clear-btn { background: #ff3b30; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Rory X Admin</h1>
+        <button class="clear-btn" onclick="if(confirm('Clear all?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
+    </div>
+
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Customer</th>
+                <th>Tutor</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="orderList"></tbody>
+    </table>
+
+    <script>
+        function loadOrders() {
+            const table = document.getElementById('orderList');
+            const data = JSON.parse(localStorage.getItem('rory_x_orders')) || [];
+            
+            table.innerHTML = '';
+            data.slice().reverse().forEach(o => {
+                table.innerHTML += `
+                    <tr>
+                        <td><b>${o.item}</b></td>
+                        <td>${o.customer}</td>
+                        <td>${o.tutor}</td>
+                        <td>${o.time}</td>
+                        <td><span class="status-tag">PAID</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        setInterval(loadOrders, 2000);
+        loadOrders();
+    </script>
+</body>
+</html>
