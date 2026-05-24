@@ -14,58 +14,49 @@
             nav a { font-size: 12px; }
             .nav-spacer { display: none; }
             .page-wrapper { margin-top: 120px; width: 90%; }
-            .product-grid { grid-template-columns: 1fr; gap: 20px; justify-content: center; }
-            .product-card { padding: 20px; border-radius: 24px; width: 100%; max-width: 280px; }
-            .img-box { height: 160px; }
+            .product-grid { grid-template-columns: 1fr; gap: 20px; }
+            .product-card { padding: 40px 20px; border-radius: 30px; }
+            .product-card img { height: 200px; }
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
-        body { background-color: #000; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-top: 120px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+        body { background-color: #000; color: #f5f5f7; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* Navigation Bar */
         nav { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 90px; 
-            background: #000; display: grid; grid-template-columns: 1fr auto 1fr; 
-            align-items: center; padding: 0 40px; z-index: 1000; box-sizing: border-box;
-            border-bottom: 1px solid #1c1c1e;
+            position: fixed; top: 0; width: 100%; height: 110px; 
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 9999; 
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.08); 
         }
-        .logo-section { display: flex; justify-content: flex-start; }
-        .logo-section img { height: 40px; width: auto; }
-        .nav-links { display: flex; gap: 40px; }
-        .nav-links a { color: white; text-decoration: none; font-size: 15px; font-weight: 500; opacity: 0.6; transition: opacity 0.2s; }
-        .nav-links a:hover { opacity: 1; }
+        .nav-logo { height: 100px; width: auto; }
+        nav ul { display: flex; list-style: none; gap: 40px; }
+        nav a { text-decoration: none; color: #f5f5f7; font-size: 14px; opacity: 0.7; transition: 0.3s; }
+        nav a:hover { opacity: 1; }
 
-        .page-wrapper { width: 95%; max-width: 1000px; display: flex; flex-direction: column; gap: 40px; margin-bottom: 80px; }
+        .page-wrapper { margin-top: 150px; width: 95%; max-width: 1200px; display: flex; flex-direction: column; gap: 40px; margin-bottom: 80px; }
         
-        /* Layout Grid sized for 3 items in a row */
-        .product-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 0 auto; padding: 20px; width: 100%; }
-        
-        /* Scaled-down Card Styling */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 40px; }
         .product-card { 
-            background: #1c1c1e; border: 1px solid #333; border-radius: 24px; 
-            padding: 20px; width: 240px; text-align: left; transition: transform 0.3s ease;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 45px; padding: 50px 40px; text-align: center; backdrop-filter: blur(20px); 
+            display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s ease;
         }
-        .product-card:hover { transform: translateY(-8px); border-color: #444; }
-        
-        .img-box { height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
-        .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        
-        .product-card h3 { margin: 10px 0 5px; font-size: 18px; font-weight: 600; color: white; text-align: left; }
-        .price-text { color: #8e8e93; margin-bottom: 15px; font-weight: 600; font-size: 15px; display: block; }
+        .product-card img { width: 100%; height: 260px; object-fit: contain; margin-bottom: 30px; }
+        .product-card h3 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
+        .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 35px; display: block; }
 
         .buy-now-btn { 
-            width: 100%; padding: 12px; background: #2ecc71; color: white; 
-            border: none; border-radius: 12px; font-weight: bold; text-align: center;
-            text-decoration: none; display: inline-block; cursor: pointer; transition: background 0.2s; font-size: 15px;
+            background-color: #34c759; color: white; padding: 16px 50px; 
+            border-radius: 14px; text-decoration: none; font-weight: 600; 
+            font-size: 17px; transition: 0.3s; align-self: center;
         }
-        .buy-now-btn:hover { background: #27ae60; }
+        .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
 
-        /* Pagination Setup */
-        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 60px; align-items: center; width: 100%; }
+        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 60px; align-items: center; }
         .page-link { background: rgba(255,255,255,0.08); color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; }
         .page-link.active { background: #34c759; }
 
-        footer { width: 100%; padding: 60px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; color: #a1a1a6; font-size: 14px; margin-top: auto; }
+        footer { width: 100%; padding: 60px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; color: #a1a1a6; font-size: 14px; }
         .social-link { text-decoration: none; display: flex; align-items: center; gap: 8px; color: #a1a1a6; transition: 0.3s; }
         .social-link img { width: 20px; height: 20px; }
         .social-link:hover { color: #fff; }
@@ -74,39 +65,30 @@
 <body>
 
     <nav>
-        <div class="logo-section">
-            <img src="RoryX.png" alt="Rory X Logo">
-        </div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="shop.html">Shop</a>
-            <a href="Clothing & Accessories.html">Clothing & Accessories</a>
-            <a href="about.html">About Us</a>
-        </div>
-        <div></div>
+        <img src="RoryX.png" alt="Rory X" class="nav-logo">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="Clothing & Accessories.html">Clothing & Accessories</a></li>
+            <li><a href="about.html">About Us</a></li>
+        </ul>
+        <div style="width: 100px;"></div>
     </nav>
 
     <div class="page-wrapper">
         <div class="product-grid">
             <div class="product-card">
-                <div class="img-box"><img src="placeholder-item1.png" alt="New Item 1"></div>
+                <img src="placeholder-item1.png">
                 <h3>Rory X Premium Item</h3>
-                <span class="price-text">£12.00</span>
+                <span>£12.00</span>
                 <a href="pay.html?item=Rory%20X%20Premium%20Item&price=12.00" class="buy-now-btn">Buy Now</a>
             </div>
 
             <div class="product-card">
-                <div class="img-box"><img src="placeholder-item2.png" alt="New Item 2"></div>
+                <img src="placeholder-item2.png">
                 <h3>Rory X Luxury Accessory</h3>
-                <span class="price-text">£20.00</span>
+                <span>£20.00</span>
                 <a href="pay.html?item=Rory%20X%20Luxury%20Accessory&price=20.00" class="buy-now-btn">Buy Now</a>
-            </div>
-
-            <div class="product-card">
-                <div class="img-box"><img src="placeholder-item3.png" alt="New Item 3"></div>
-                <h3>Rory X Special Edition</h3>
-                <span class="price-text">£15.00</span>
-                <a href="pay.html?item=Rory%20X%20Special%20Edition&price=15.00" class="buy-now-btn">Buy Now</a>
             </div>
         </div>
 
