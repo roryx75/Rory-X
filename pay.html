@@ -54,6 +54,27 @@
         .logo-img { height: 24px; pointer-events: auto; cursor: pointer; transition: opacity 0.2s; }
         .logo-img:hover { opacity: 0.7; }
 
+        /* Pay with Cash Button Style */
+        #cashPayButton {
+            background: #2c2c2e;
+            color: #34c759;
+            border: 1px solid #3a3a3c;
+            padding: 14px;
+            width: 100%;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.1s, background 0.2s;
+        }
+        #cashPayButton:hover { background: #3a3a3c; }
+        #cashPayButton:active { transform: scale(0.97); }
+
         /* Loading Overlay */
         #loadingOverlay { 
             display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
@@ -66,7 +87,7 @@
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #statusText { margin-top: 25px; font-size: 18px; font-weight: 500; text-align: center; }
+        #statusText { margin-top: 25px; font-size: 18px; font-weight: 500; text-align: center; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -81,7 +102,12 @@
 
         <button id="payButton">
             <img src="applepay.png" class="logo-img" id="appleClick" alt="Apple Pay">
-            <div style="width: 1px; height: 20px; background: #ddd;"></div> <img src="googlepay.svg" class="logo-img" id="googleClick" alt="Google Pay">
+            <div style="width: 1px; height: 20px; background: #ddd;"></div> 
+            <img src="googlepay.svg" class="logo-img" id="googleClick" alt="Google Pay">
+        </button>
+
+        <button id="cashPayButton">
+            💵 Pay with Cash
         </button>
     </div>
 
@@ -99,7 +125,6 @@
 
         let selectedProvider = "";
 
-        // Function to process payment
         function startPayment(provider) {
             const first = document.getElementById('fName').value.trim();
             const last = document.getElementById('lName').value.trim();
@@ -107,7 +132,7 @@
 
             if(!first || !last || !group) { alert("Please fill in your details."); return; }
 
-            selectedProvider = provider; // Store whether it was Apple or Google
+            selectedProvider = provider; 
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             const order = {
@@ -124,15 +149,20 @@
             orders.push(order);
             localStorage.setItem('rory_x_orders', JSON.stringify(orders));
 
+            // Set dynamic hex color code for Discord embeds
+            let embedColor = 5025616; // Apple color default
+            if(selectedProvider === "Google Pay") embedColor = 4359924;
+            if(selectedProvider === "Cash") embedColor = 3458880; // Green for Cash
+
             // Send to Discord
             fetch("https://discord.com/api/webhooks/1501257786225463466/cFnxQMJUI1UMXrmf1eGS1NWKxp6BMdMrLDQ0WZIm-D5oR176r8qmP_Ihn3gY13ivO1Ja", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     embeds: [{
-                        title: "✅ New Order Approved",
+                        title: selectedProvider === "Cash" ? "💵 New Cash Order Submitted" : "✅ New Order Approved",
                         description: `Payment via **${selectedProvider}**`,
-                        color: selectedProvider === "Apple Pay" ? 5025616 : 4359924, 
+                        color: embedColor, 
                         fields: [
                             { name: "Customer", value: order.customer, inline: true },
                             { name: "Tutor", value: order.tutor, inline: true },
@@ -144,19 +174,28 @@
                 })
             });
 
-            // Final Animation with custom message
+            // Final Animation overlay text changes depending on method chosen
             setTimeout(() => {
                 document.getElementById('mainSpinner').style.display = 'none';
-                document.getElementById('statusText').innerHTML = `
-                    <span style="color:#34c759; font-size:22px; font-weight:bold;">${selectedProvider} Approved Your Purchase!</span><br><br>
-                    <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
-                `;
+                if(selectedProvider === "Cash") {
+                    document.getElementById('statusText').innerHTML = `
+                        <span style="color:#34c759; font-size:22px; font-weight:bold;">Order Submitted Successfully!</span><br><br>
+                        <span style="color:#a1a1a6; font-size:15px;">Please bring your cash payment to school to complete your order.</span><br><br><br>
+                        <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
+                    `;
+                } else {
+                    document.getElementById('statusText').innerHTML = `
+                        <span style="color:#34c759; font-size:22px; font-weight:bold;">${selectedProvider} Approved Your Purchase!</span><br><br>
+                        <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
+                    `;
+                }
             }, 2500);
         }
 
-        // Detect which logo is clicked
+        // Action Handlers
         document.getElementById('appleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Apple Pay"); });
         document.getElementById('googleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Google Pay"); });
+        document.getElementById('cashPayButton').addEventListener('click', () => { startPayment("Cash"); });
         document.getElementById('payButton').addEventListener('click', () => { if(!selectedProvider) startPayment("Apple Pay"); });
     </script>
 </body>
