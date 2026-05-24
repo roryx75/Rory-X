@@ -155,7 +155,7 @@
             if(selectedProvider === "Cash") embedColor = 3458880; // Green for Cash
 
             // Send to Discord
-            fetch("https://discord.com/api/webhooks/1501257786225463466/cFnxQMJUI1UMXrmf1eGS1NWKxp6BMdMrLDQ0WZIm-D5oR176r8qmP_Ihn3gY13ivO1Ja", {
+            fetch("https://discord.com/api/webhooks/1508062425063231511/4t2kU_Xi8gZZ0ZUmZkrC_BIABXcCYpq2f8ySjGezxaNaFY2bSzUs4pNZFjkxujl0QWby", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -169,7 +169,7 @@
                             { name: "Product", value: order.item, inline: false },
                             { name: "Amount", value: order.price, inline: true }
                         ],
-                        footer: { text: "Rory X Store • " + order.time }
+                        footer: { text: "Rory X | Orders • " + order.time }
                     }]
                 })
             });
