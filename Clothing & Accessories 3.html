@@ -84,6 +84,15 @@
                 <a href="pay.html?item=Rory%20X%20Jewelry%20Box&price=15.00" class="buy-now-btn">Buy Now</a>
             </div>
 
+            <div class="page-wrapper">
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="Hoodie1.2.png">
+                <h3>Rory X Hoodie</h3>
+                <span>£15.00</span>
+                <a href="pay.html?item=Rory%20X%20Hoodie%20&price=15.00" class="buy-now-btn">Buy Now</a>
+            </div>
+
             <div class="product-card">
                 <img src="Harryball.png">
                 <h3>Harry's Golf Ball (6pc)</h3>
@@ -91,25 +100,6 @@
                 <a href="pay.html?item=HArry%20Gold%20Ball%20(6pc)&price=30.00" class="buy-now-btn">Buy Now</a>
             </div>
         </div>
-
-        <div class="product-card">
-                <div class="slider-container">
-                    <div class="slides" id="mugSlider">
-                        <img src="Hoodie1,2.png">
-                        <img src="Hoodie2,2.png">
-                    </div>
-                </div>
-                <div class="dot-container">
-                    <span class="dot active" onclick="manualMove(0)"></span>
-                    <span class="dot" onclick="manualMove(1)"></span>
-                    <span class="dot" onclick="manualMove(2)"></span>
-                </div>
-                <h3>Rory X Hoodie</h3>
-                <span>£14.00</span>
-                <a href="pay.html?item=Rory%20X%20Hoddie%20&price=14.00" class="buy-now-btn">Buy Now</a>
-            </div>
-        </div>
-
 
         <div class="pagination">
             <a href="Clothing & Accessories 2.html" style="color: #34c759; text-decoration: none; font-weight: 600; margin-right: 15px;">← Previous Page</a>
@@ -135,36 +125,5 @@
             </div>
         </div>
     </footer>
-</body>
-</html>
-<script>
-        let currentIndex = 0;
-        const totalSlides = 3;
-        let slideInterval;
-
-        function moveSlider(index) {
-            const slider = document.getElementById('mugSlider');
-            const dots = document.querySelectorAll('.dot');
-            if (slider) {
-                slider.style.transform = `translateX(-${index * 33.333}%)`;
-                dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-                currentIndex = index;
-            }
-        }
-
-        function startAutoSlide() {
-            slideInterval = setInterval(() => {
-                moveSlider((currentIndex + 1) % totalSlides);
-            }, 2000);
-        }
-
-        function manualMove(index) {
-            clearInterval(slideInterval);
-            moveSlider(index);
-            startAutoSlide();
-        }
-
-        startAutoSlide();
-    </script>
 </body>
 </html>
