@@ -23,14 +23,18 @@
             width: 350px; 
             text-align: center; 
             border: 1px solid #333; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #itemName { color: #8e8e93; font-size: 14px; text-transform: uppercase; margin-bottom: 8px; }
         .price { font-size: 48px; font-weight: 700; margin-bottom: 30px; }
 
         input { 
-            width: 90%; padding: 14px; margin: 6px 0; border-radius: 12px; 
+            width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; 
             border: 1px solid #3a3a3c; background: #2c2c2e; color: white; font-size: 16px; outline: none; 
+            box-sizing: border-box;
         }
 
         /* The Multi-Pay Button */
@@ -75,6 +79,28 @@
         #cashPayButton:hover { background: #3a3a3c; }
         #cashPayButton:active { transform: scale(0.97); }
 
+        /* Admin Portal Link Style */
+        .admin-portal-btn {
+            display: inline-block;
+            background: transparent;
+            color: #8e8e93;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 25px;
+            transition: 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .admin-portal-btn:hover {
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
         /* Loading Overlay */
         #loadingOverlay { 
             display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
@@ -109,6 +135,8 @@
         <button id="cashPayButton">
             💵 Pay with Cash
         </button>
+
+        <a href="admin.html" class="admin-portal-btn">⚙️ Admin Portal</a>
     </div>
 
     <div id="loadingOverlay">
