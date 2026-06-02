@@ -2,9 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Portal | Rory X</title>
     <style>
-        body { background: #000; color: white; font-family: -apple-system, sans-serif; padding: 40px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; color: white; font-family: -apple-system, sans-serif; padding: 40px; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Login Screen Interface Container */
+        #loginScreen {
+            margin: auto;
+            background: #1c1c1e; 
+            padding: 40px 30px; 
+            border-radius: 28px; 
+            width: 100%;
+            max-width: 360px; 
+            text-align: center; 
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        #loginScreen h2 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
+        #loginScreen input {
+            width: 100%; padding: 14px; border-radius: 12px; 
+            border: 1px solid #3a3a3c; background: #2c2c2e; color: white; font-size: 16px; outline: none;
+        }
+        #loginScreen button {
+            background-color: #34c759; color: white; border: none; padding: 14px;
+            width: 100%; border-radius: 12px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s;
+        }
+        #loginScreen button:hover { background-color: #2da44e; }
+        #errorMessage { color: #ff3b30; font-size: 14px; font-weight: 500; display: none; }
+
+        /* Hidden Content Block for Admin Panel */
+        #adminPanel { display: none; width: 100%; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .order-table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: #8e8e93; font-size: 12px; text-transform: uppercase; padding: 15px; border-bottom: 1px solid #333; }
@@ -15,25 +46,54 @@
 </head>
 <body>
 
-    <div class="header">
-        <h1>Rory X Admin</h1>
-        <button class="clear-btn" onclick="if(confirm('Clear all?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
+    <div id="loginScreen">
+        <h2>Admin Authentication</h2>
+        <input type="password" id="adminPassword" placeholder="Enter Admin Password" onkeydown="if(event.key === 'Enter') checkLogin()">
+        <p id="errorMessage">Incorrect password. Access denied.</p>
+        <button onclick="checkLogin()">Access Logs</button>
     </div>
 
-    <table class="order-table">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Customer</th>
-                <th>Tutor</th>
-                <th>Time</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="orderList"></tbody>
-    </table>
+    <div id="adminPanel">
+        <div class="header">
+            <h1>Rory X Admin Dashboard</h1>
+            <button class="clear-btn" onclick="if(confirm('Clear all?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
+        </div>
+
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Customer</th>
+                    <th>Tutor</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="orderList"></tbody>
+        </table>
+    </div>
 
     <script>
+        // Authentication Controller Logic
+        function checkLogin() {
+            const passwordInput = document.getElementById('adminPassword').value;
+            const systemKey = "roryx2026"; // Set your password parameter here
+            
+            if (passwordInput === systemKey) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                
+                // Initialize active reading listeners 
+                loadOrders();
+                setInterval(loadOrders, 2000);
+            } else {
+                const errorElement = document.getElementById('errorMessage');
+                errorElement.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        // Operational Logging System
         function loadOrders() {
             const table = document.getElementById('orderList');
             const data = JSON.parse(localStorage.getItem('rory_x_orders')) || [];
@@ -42,18 +102,15 @@
             data.slice().reverse().forEach(o => {
                 table.innerHTML += `
                     <tr>
-                        <td><b>${o.item}</b></td>
-                        <td>${o.customer}</td>
-                        <td>${o.tutor}</td>
-                        <td>${o.time}</td>
-                        <td><span class="status-tag">PAID</span></td>
+                        <td><b>${o.item || 'Unknown Item'}</b></td>
+                        <td>${o.customer || 'Anonymous'}</td>
+                        <td>${o.tutor || 'N/A'}</td>
+                        <td>${o.time || '--:--'}</td>
+                        <td><span class="status-tag">${o.method === 'Cash' ? 'PENDING CASH' : 'PAID'}</span></td>
                     </tr>
                 `;
             });
         }
-
-        setInterval(loadOrders, 2000);
-        loadOrders();
     </script>
 </body>
 </html>
