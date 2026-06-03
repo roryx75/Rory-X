@@ -37,11 +37,15 @@
         /* Hidden Content Block for Admin Panel */
         #adminPanel { display: none; width: 100%; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header-actions { display: flex; gap: 10px; } /* Container to align dashboard buttons side-by-side */
         .order-table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: #8e8e93; font-size: 12px; text-transform: uppercase; padding: 15px; border-bottom: 1px solid #333; }
         td { padding: 20px 15px; border-bottom: 1px solid #1c1c1e; font-size: 15px; }
         .status-tag { color: #34c759; font-weight: 600; background: rgba(52, 199, 89, 0.1); padding: 5px 10px; border-radius: 6px; font-size: 12px; }
         .clear-btn { background: #ff3b30; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        /* Exit Button Styling */
+        .exit-btn { background: #3a3a3c; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .exit-btn:hover { background: #48484a; }
     </style>
 </head>
 <body>
@@ -57,7 +61,10 @@
     <div id="adminPanel">
         <div class="header">
             <h1>Rory X Admin Dashboard</h1>
-            <button class="clear-btn" onclick="if(confirm('Clear all?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
+            <div class="header-actions">
+                <button class="exit-btn" onclick="window.location.href='index.html'">Exit</button>
+                <button class="clear-btn" onclick="if(confirm('Clear all?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
+            </div>
         </div>
 
         <table class="order-table">
