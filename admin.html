@@ -48,8 +48,9 @@
 
     <div id="loginScreen">
         <h2>Admin Authentication</h2>
+        <input type="email" id="adminEmail" placeholder="Enter Admin Email" onkeydown="if(event.key === 'Enter') checkLogin()">
         <input type="password" id="adminPassword" placeholder="Enter Admin Password" onkeydown="if(event.key === 'Enter') checkLogin()">
-        <p id="errorMessage">Incorrect password. Access denied.</p>
+        <p id="errorMessage">Incorrect credentials. Access denied.</p>
         <button onclick="checkLogin()">Access Logs</button>
     </div>
 
@@ -76,14 +77,27 @@
     <script>
         // Authentication Controller Logic
         function checkLogin() {
+            const emailInput = document.getElementById('adminEmail').value.trim();
             const passwordInput = document.getElementById('adminPassword').value;
-            const systemKey = "roryx2026"; // Set your password parameter here
             
-            if (passwordInput === systemKey) {
+            // List of permitted emails
+            const authorizedEmails = [
+                "Harry.Ayling.roryxteam@hotmail.com",
+                "Emily.Brezo.roryxteam@hotmail.com",
+                "Oliver.Balint.roryxteam@hotmail.com",
+                "Miki.J.roryxteam@hotmail.com",
+                "Kyen.Ellis.roryxteam@hotmail.com",
+                "Rory.H.roryxteam@hotmail.com"
+            ];
+            
+            // Capitalized password requirement for all users
+            const systemKey = "Roryx2026"; 
+            
+            // Checks if the entered email is in the array AND the password matches
+            if (authorizedEmails.includes(emailInput) && passwordInput === systemKey) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
-                // Initialize active reading listeners 
                 loadOrders();
                 setInterval(loadOrders, 2000);
             } else {
