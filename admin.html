@@ -37,15 +37,17 @@
         /* Hidden Content Block for Admin Panel */
         #adminPanel { display: none; width: 100%; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .header-actions { display: flex; gap: 10px; } /* Container to align dashboard buttons side-by-side */
+        .header-actions { display: flex; gap: 10px; }
         .order-table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: #8e8e93; font-size: 12px; text-transform: uppercase; padding: 15px; border-bottom: 1px solid #333; }
         td { padding: 20px 15px; border-bottom: 1px solid #1c1c1e; font-size: 15px; }
         .status-tag { color: #34c759; font-weight: 600; background: rgba(52, 199, 89, 0.1); padding: 5px 10px; border-radius: 6px; font-size: 12px; }
         .clear-btn { background: #ff3b30; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        /* Exit Button Styling */
         .exit-btn { background: #3a3a3c; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .exit-btn:hover { background: #48484a; }
+        
+        /* Style for the promo code text in the row */
+        .promo-tag { color: #ff9500; font-weight: 600; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -73,7 +75,7 @@
                     <th>Product</th>
                     <th>Customer</th>
                     <th>Tutor</th>
-                    <th>Time</th>
+                    <th>Discount Code</th> <th>Time</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -87,20 +89,14 @@
             const emailInput = document.getElementById('adminEmail').value.trim();
             const passwordInput = document.getElementById('adminPassword').value;
             
-            // List of permitted emails
             const authorizedEmails = [
-                "Harry.Ayling.roryxteam@hotmail.com",
-                "Emily.Brezo.roryxteam@hotmail.com",
-                "Oliver.Balint.roryxteam@hotmail.com",
-                "Miki.J.roryxteam@hotmail.com",
-                "Kyen.Ellis.roryxteam@hotmail.com",
-                "Rory.H.roryxteam@hotmail.com"
+                "admin@roryx.com",
+                "user2@roryx.com",
+                "user3@roryx.com"
             ];
             
-            // Capitalized password requirement for all users
             const systemKey = "Roryx2026"; 
             
-            // Checks if the entered email is in the array AND the password matches
             if (authorizedEmails.includes(emailInput) && passwordInput === systemKey) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
@@ -121,13 +117,19 @@
             
             table.innerHTML = '';
             data.slice().reverse().forEach(o => {
+                // Determine if a promo code was attached to the payment method label
+                let promoUsed = "None";
+                if (o.method && o.method.includes("(Promo Applied)")) {
+                    promoUsed = `<span class="promo-tag">FREE10</span>`;
+                }
+
                 table.innerHTML += `
                     <tr>
                         <td><b>${o.item || 'Unknown Item'}</b></td>
                         <td>${o.customer || 'Anonymous'}</td>
                         <td>${o.tutor || 'N/A'}</td>
-                        <td>${o.time || '--:--'}</td>
-                        <td><span class="status-tag">${o.method === 'Cash' ? 'PENDING CASH' : 'PAID'}</span></td>
+                        <td>${promoUsed}</td> <td>${o.time || '--:--'}</td>
+                        <td><span class="status-tag">${o.method && o.method.includes('Cash') ? 'PENDING CASH' : 'PAID'}</span></td>
                     </tr>
                 `;
             });
