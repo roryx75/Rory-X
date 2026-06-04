@@ -35,19 +35,42 @@
         #errorMessage { color: #ff3b30; font-size: 14px; font-weight: 500; display: none; }
 
         /* Hidden Content Block for Admin Panel */
-        #adminPanel { display: none; width: 100%; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        #adminPanel { display: none; width: 100%; max-width: 1200px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1c1c1e; padding-bottom: 15px; }
         .header-actions { display: flex; gap: 10px; }
+        
+        /* Layout Grid splits Stock Engine and Order Logs */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; }
+        
+        /* Inventory Engine Panel Styles */
+        .inventory-section { background: #1c1c1e; border: 1px solid #333; border-radius: 24px; padding: 25px; }
+        .inventory-section h2 { font-size: 20px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .category-header { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8e8e93; letter-spacing: 1px; margin: 20px 0 10px 0; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #2c2c2e; }
+        .product-row:last-of-type { border-bottom: none; }
+        .product-label { font-size: 14px; color: #e5e5ea; max-width: 70%; }
+        .product-row input[type="number"] { width: 70px; padding: 8px; background: #2c2c2e; border: 1px solid #3a3a3c; color: white; border-radius: 8px; text-align: center; font-size: 14px; outline: none; }
+        .product-row input[type="number"]:focus { border-color: #34c759; }
+        .inventory-actions { display: flex; gap: 10px; margin-top: 25px; }
+        
+        /* Order History Log Panel Styles */
+        .orders-section { background: #1c1c1e; border: 1px solid #333; border-radius: 24px; padding: 25px; min-height: 500px; }
+        .orders-section h2 { font-size: 20px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .order-table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: #8e8e93; font-size: 12px; text-transform: uppercase; padding: 15px; border-bottom: 1px solid #333; }
-        td { padding: 20px 15px; border-bottom: 1px solid #1c1c1e; font-size: 15px; }
+        td { padding: 15px; border-bottom: 1px solid #2c2c2e; font-size: 14px; }
+        
+        /* UI Tags and Action Buttons */
         .status-tag { color: #34c759; font-weight: 600; background: rgba(52, 199, 89, 0.1); padding: 5px 10px; border-radius: 6px; font-size: 12px; }
+        .promo-tag { color: #ff9500; font-weight: 600; font-family: monospace; }
+        .alert-toast { display: none; background: rgba(52, 199, 89, 0.15); border: 1px solid #34c759; color: #34c759; padding: 12px; border-radius: 10px; text-align: center; font-size: 14px; font-weight: 600; margin-top: 15px; }
+        
         .clear-btn { background: #ff3b30; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .exit-btn { background: #3a3a3c; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .exit-btn:hover { background: #48484a; }
-        
-        /* Style for the promo code text in the row */
-        .promo-tag { color: #ff9500; font-weight: 600; font-family: monospace; }
+        .save-btn { background: #34c759; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 2; }
+        .save-btn:hover { background-color: #2da44e; }
+        .reset-btn { background: #3a3a3c; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; }
     </style>
 </head>
 <body>
@@ -57,7 +80,7 @@
         <input type="email" id="adminEmail" placeholder="Enter Admin Email" onkeydown="if(event.key === 'Enter') checkLogin()">
         <input type="password" id="adminPassword" placeholder="Enter Admin Password" onkeydown="if(event.key === 'Enter') checkLogin()">
         <p id="errorMessage">Incorrect credentials. Contact Roryxmedia@hotmail.com</p>
-        <button onclick="checkLogin()">Access Logs</button>
+        <button onclick="checkLogin()">Access Logs & Engine</button>
     </div>
 
     <div id="adminPanel">
@@ -65,25 +88,73 @@
             <h1>Rory X Admin Dashboard</h1>
             <div class="header-actions">
                 <button class="exit-btn" onclick="window.location.href='index.html'">Exit</button>
-                <button class="clear-btn" onclick="if(confirm('Clear all?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
+                <button class="clear-btn" onclick="if(confirm('Clear all order histories?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
             </div>
         </div>
 
-        <table class="order-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Customer</th>
-                    <th>Tutor</th>
-                    <th>Discount Code</th> <th>Time</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="orderList"></tbody>
-        </table>
+        <div class="dashboard-grid">
+            <div class="inventory-section">
+                <h2>Live Stock Engine</h2>
+                <form id="inventoryForm">
+                    <div class="category-header">Main Shop Items</div>
+                    <div id="mainShopItems"></div>
+
+                    <div class="category-header">Clothing Line</div>
+                    <div id="clothingItems"></div>
+
+                    <div class="category-header">Accessories & Merch</div>
+                    <div id="accessoriesItems"></div>
+
+                    <div class="inventory-actions">
+                        <button type="button" class="reset-btn" onclick="resetStockDefaults()">Reset</button>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </div>
+                </form>
+                <div id="saveToast" class="alert-toast">✓ Inventory engine data deployed successfully.</div>
+            </div>
+
+            <div class="orders-section">
+                <h2>Customer Order Log</h2>
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Customer</th>
+                            <th>Tutor</th>
+                            <th>Discount Code</th> 
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderList"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Store Catalog Blueprint Registry for Local Syncing
+        const catalogBlueprint = [
+            { name: "Dehydrated Water", defaultStock: 15, group: "shop" },
+            { name: "Air (Small)", defaultStock: 10, group: "shop" },
+            { name: "Air (Medium)", defaultStock: 10, group: "shop" },
+            { name: "Air (Large)", defaultStock: 5, group: "shop" },
+            { name: "Unlit Fire", defaultStock: 8, group: "shop" },
+            { name: "Boxes", defaultStock: 20, group: "shop" },
+            
+            { name: "Rory X Unisex Joggers (Black)", defaultStock: 12, group: "clothing" },
+            { name: "Rory X Unisex Joggers (White)", defaultStock: 12, group: "clothing" },
+            { name: "Rory X Hoodie", defaultStock: 25, group: "clothing" },
+            { name: "Rory X Socks (Black)", defaultStock: 50, group: "clothing" },
+            { name: "Rory X Socks (White)", defaultStock: 50, group: "clothing" },
+            
+            { name: "Rory X Sticker", defaultStock: 100, group: "accessories" },
+            { name: "Rory X Hockey Puck", defaultStock: 15, group: "accessories" },
+            { name: "Rory X Shower Curtain", defaultStock: 5, group: "accessories" },
+            { name: "Rory X 10oz glass", defaultStock: 30, group: "accessories" },
+            { name: "Rory X Mug (3 Designs)", defaultStock: 24, group: "accessories" }
+        ];
+
         // Authentication Controller Logic
         function checkLogin() {
             const emailInput = document.getElementById('adminEmail').value.trim();
@@ -105,12 +176,87 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
+                // Initialize Engine Database and Layout UI
+                initializeStockDatabase();
+                renderStockRows();
                 loadOrders();
+                
+                // Keep history dynamic log feed updated live
                 setInterval(loadOrders, 2000);
             } else {
                 const errorElement = document.getElementById('errorMessage');
                 errorElement.style.display = 'block';
                 document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        // Initialize Shared Database Array Structures
+        function initializeStockDatabase() {
+            if (!localStorage.getItem('rory_x_stock')) {
+                let initialMap = {};
+                catalogBlueprint.forEach(item => {
+                    initialMap[item.name] = item.defaultStock;
+                });
+                localStorage.setItem('rory_x_stock', JSON.stringify(initialMap));
+            }
+        }
+
+        // Render Controls Cleanly inside Form Brackets
+        function renderStockRows() {
+            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
+            
+            const shopTarget = document.getElementById('mainShopItems');
+            const clothingTarget = document.getElementById('clothingItems');
+            const accTarget = document.getElementById('accessoriesItems');
+            
+            shopTarget.innerHTML = '';
+            clothingTarget.innerHTML = '';
+            accTarget.innerHTML = '';
+            
+            catalogBlueprint.forEach(item => {
+                const currentCount = liveStock[item.name] !== undefined ? liveStock[item.name] : item.defaultStock;
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.innerHTML = `
+                    <span class="product-label">${item.name}</span>
+                    <input type="number" min="0" max="999" name="${item.name}" value="${currentCount}">
+                `;
+                
+                if (item.group === 'shop') shopTarget.appendChild(row);
+                else if (item.group === 'clothing') clothingTarget.appendChild(row);
+                else if (item.group === 'accessories') accTarget.appendChild(row);
+            });
+        }
+
+        // Process Updates to Local Storage Matrix on Submission
+        document.getElementById('inventoryForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            let targetMap = {};
+            
+            formData.forEach((value, key) => {
+                targetMap[key] = parseInt(value) || 0;
+            });
+            
+            localStorage.setItem('rory_x_stock', JSON.stringify(targetMap));
+            
+            // Pop Active Success Toast Alert Window
+            const toast = document.getElementById('saveToast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            
+            renderStockRows();
+        });
+
+        // Restore Catalog Array Defaults
+        function resetStockDefaults() {
+            if (confirm("Restore original catalog factory defaults? Current configurations will be lost.")) {
+                let resetMap = {};
+                catalogBlueprint.forEach(item => {
+                    resetMap[item.name] = item.defaultStock;
+                });
+                localStorage.setItem('rory_x_stock', JSON.stringify(resetMap));
+                renderStockRows();
             }
         }
 
@@ -132,7 +278,8 @@
                         <td><b>${o.item || 'Unknown Item'}</b></td>
                         <td>${o.customer || 'Anonymous'}</td>
                         <td>${o.tutor || 'N/A'}</td>
-                        <td>${promoUsed}</td> <td>${o.time || '--:--'}</td>
+                        <td>${promoUsed}</td> 
+                        <td>${o.time || '--:--'}</td>
                         <td><span class="status-tag">${o.method && o.method.includes('Cash') ? 'PENDING CASH' : 'PAID'}</span></td>
                     </tr>
                 `;
