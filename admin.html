@@ -35,17 +35,17 @@
         #errorMessage { color: #ff3b30; font-size: 14px; font-weight: 500; display: none; }
 
         /* Hidden Content Block for Admin Panel */
-        #adminPanel { display: none; width: 100%; max-width: 1200px; margin: 0 auto; }
+        #adminPanel { display: none; width: 100%; max-width: 1400px; margin: 0 auto; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1c1c1e; padding-bottom: 15px; }
         .header-actions { display: flex; gap: 10px; }
         
         /* Layout Grid splits Stock Engine and Order Logs */
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: start; }
         
         /* Inventory Engine Panel Styles */
         .inventory-section { background: #1c1c1e; border: 1px solid #333; border-radius: 24px; padding: 25px; }
-        .inventory-section h2 { font-size: 20px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .category-header { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8e8e93; letter-spacing: 1px; margin: 20px 0 10px 0; }
+        .inventory-section h2 { font-size: 20px; margin-bottom: 5px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .category-header { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #34c759; letter-spacing: 1px; margin: 25px 0 10px 0; border-bottom: 1px solid #2c2c2e; padding-bottom: 5px; }
         .product-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #2c2c2e; }
         .product-row:last-of-type { border-bottom: none; }
         .product-label { font-size: 14px; color: #e5e5ea; max-width: 70%; }
@@ -99,14 +99,14 @@
                     <div class="category-header">Main Shop Items</div>
                     <div id="mainShopItems"></div>
 
-                    <div class="category-header">Clothing Line</div>
+                    <div class="category-header">Clothing Line (Page 1 & 2)</div>
                     <div id="clothingItems"></div>
 
-                    <div class="category-header">Accessories & Merch</div>
+                    <div class="category-header">Accessories & Merch (Page 1, 2 & 3)</div>
                     <div id="accessoriesItems"></div>
 
                     <div class="inventory-actions">
-                        <button type="button" class="reset-btn" onclick="resetStockDefaults()">Reset</button>
+                        <button type="button" class="reset-btn" onclick="resetStockDefaults()">Reset Defaults</button>
                         <button type="submit" class="save-btn">Save Changes</button>
                     </div>
                 </form>
@@ -133,8 +133,9 @@
     </div>
 
     <script>
-        // Store Catalog Blueprint Registry for Local Syncing
+        // Master Catalog Blueprint Registry containing ALL 22 products
         const catalogBlueprint = [
+            // --- MAIN SHOP PAGE ---
             { name: "Dehydrated Water", defaultStock: 15, group: "shop" },
             { name: "Air (Small)", defaultStock: 10, group: "shop" },
             { name: "Air (Medium)", defaultStock: 10, group: "shop" },
@@ -142,17 +143,28 @@
             { name: "Unlit Fire", defaultStock: 8, group: "shop" },
             { name: "Boxes", defaultStock: 20, group: "shop" },
             
+            // --- CLOTHING & ACCESSORIES PAGE 1 ---
+            { name: "Rory X Hat", defaultStock: 12, group: "clothing" },
+            { name: "Rory X T-Shirt", defaultStock: 15, group: "clothing" },
+            { name: "Rory X Phone Case", defaultStock: 20, group: "accessories" },
+            { name: "Rory X Pin Badge", defaultStock: 40, group: "accessories" },
+            { name: "Air Freshener", defaultStock: 30, group: "accessories" },
+            { name: "Face Mask", defaultStock: 25, group: "accessories" },
+
+            // --- CLOTHING & ACCESSORIES PAGE 2 ---
             { name: "Rory X Unisex Joggers (Black)", defaultStock: 12, group: "clothing" },
             { name: "Rory X Unisex Joggers (White)", defaultStock: 12, group: "clothing" },
-            { name: "Rory X Hoodie", defaultStock: 25, group: "clothing" },
             { name: "Rory X Socks (Black)", defaultStock: 50, group: "clothing" },
             { name: "Rory X Socks (White)", defaultStock: 50, group: "clothing" },
-            
             { name: "Rory X Sticker", defaultStock: 100, group: "accessories" },
             { name: "Rory X Hockey Puck", defaultStock: 15, group: "accessories" },
             { name: "Rory X Shower Curtain", defaultStock: 5, group: "accessories" },
             { name: "Rory X 10oz glass", defaultStock: 30, group: "accessories" },
-            { name: "Rory X Mug (3 Designs)", defaultStock: 24, group: "accessories" }
+            { name: "Rory X Mug (3 Designs)", defaultStock: 24, group: "accessories" },
+
+            // --- CLOTHING & ACCESSORIES PAGE 3 ---
+            { name: "Rory X Hoodie", defaultStock: 25, group: "clothing" },
+            { name: "Rory X Jewelry Box", defaultStock: 15, group: "accessories" }
         ];
 
         // Authentication Controller Logic
@@ -189,12 +201,20 @@
 
         // Initialize Shared Database Array Structures
         function initializeStockDatabase() {
-            if (!localStorage.getItem('rory_x_stock')) {
-                let initialMap = {};
-                catalogBlueprint.forEach(item => {
-                    initialMap[item.name] = item.defaultStock;
-                });
-                localStorage.setItem('rory_x_stock', JSON.stringify(initialMap));
+            let existingStock = localStorage.getItem('rory_x_stock');
+            let currentMap = existingStock ? JSON.parse(existingStock) : {};
+            let updated = false;
+
+            // Make sure newly added items inherit defaults if missing
+            catalogBlueprint.forEach(item => {
+                if (currentMap[item.name] === undefined) {
+                    currentMap[item.name] = item.defaultStock;
+                    updated = true;
+                }
+            });
+
+            if (!existingStock || updated) {
+                localStorage.setItem('rory_x_stock', JSON.stringify(currentMap));
             }
         }
 
