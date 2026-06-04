@@ -43,14 +43,21 @@
         }
         .product-card img { width: 100%; height: 260px; object-fit: contain; margin-bottom: 30px; }
         .product-card h3 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
-        .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 35px; display: block; }
+        .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 15px; display: block; }
+
+        /* Stock Counter Styles */
+        .stock-tag { font-size: 13px; font-weight: 600; margin-bottom: 20px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
+        .in-stock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
+        .low-stock { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
+        .out-of-stock { color: #ff3b30; background: rgba(255, 59, 48, 0.1); }
 
         .buy-now-btn { 
             background-color: #34c759; color: white; padding: 16px 50px; 
             border-radius: 14px; text-decoration: none; font-weight: 600; 
-            font-size: 17px; transition: 0.3s; align-self: center;
+            font-size: 17px; transition: 0.3s; align-self: center; width: 100%; text-align: center; display: inline-block;
         }
         .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
+        .buy-now-btn.disabled { background-color: #222 !important; color: #555 !important; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
         /* Slider Styles */
         .slider-container { position: relative; width: 100%; height: 260px; margin-bottom: 10px; overflow: hidden; border-radius: 25px; }
@@ -85,89 +92,134 @@
 
     <div class="page-wrapper">
         <div class="product-grid">
-            <div class="product-card">
-                <img src="Joggers (Black).png">
-                <h3>Rory X Unisex Joggers (Black)</h3>
-                <span>£15.00</span>
-                <a href="pay.html?item=Rory%20X%20Unisex%20Joggers%20(Black)&price=15.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Unisex Joggers (Black)">
+                <div>
+                    <img src="Joggers (Black).png">
+                    <h3>Rory X Unisex Joggers (Black)</h3>
+                    <span>£15.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Unisex%20Joggers%20(Black)&price=15.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-            <div class="product-card">
-                <img src="Joggers (White).png">
-                <h3>Rory X Unisex Joggers (White)</h3>
-                <span>£15.00</span>
-                <a href="pay.html?item=Rory%20X%20Unisex%20Joggers%20(White)&price=15.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Unisex Joggers (White)">
+                <div>
+                    <img src="Joggers (White).png">
+                    <h3>Rory X Unisex Joggers (White)</h3>
+                    <span>£15.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Unisex%20Joggers%20(White)&price=15.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-            <div class="product-card">
-                <img src="Socks (Black).png">
-                <h3>Rory X Socks (Black)</h3>
-                <span>£5.00</span>
-                <a href="pay.html?item=Rory%20X%20Socks%20(Black)&price=5.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Socks (Black)">
+                <div>
+                    <img src="Socks (Black).png">
+                    <h3>Rory X Socks (Black)</h3>
+                    <span>£5.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Socks%20(Black)&price=5.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-            <div class="product-card">
-                <img src="Socks (White).png">
-                <h3>Rory X Socks (White)</h3>
-                <span>£5.00</span>
-                <a href="pay.html?item=Rory%20X%20Socks%20(White)&price=5.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Socks (White)">
+                <div>
+                    <img src="Socks (White).png">
+                    <h3>Rory X Socks (White)</h3>
+                    <span>£5.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Socks%20(White)&price=5.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
             
-            <div class="product-card">
-                <img src="RoryXSticker.png">
-                <h3>Rory X Sticker</h3>
-                <span>£3.00</span>
-                <a href="pay.html?item=Rory%20X%20Sticker&price=3.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Sticker">
+                <div>
+                    <img src="RoryXSticker.png">
+                    <h3>Rory X Sticker</h3>
+                    <span>£3.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Sticker&price=3.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-            
-            <div class="product-card">
-                <img src="Hockey.png">
-                <h3>Rory X Hockey Puck</h3>
-                <span>£25.00</span>
-                <a href="pay.html?item=Rory%20X%20Hockey%20Puck&price=25.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Hockey Puck">
+                <div>
+                    <img src="Hockey.png">
+                    <h3>Rory X Hockey Puck</h3>
+                    <span>£25.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Hockey%20Puck&price=25.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-             <div class="product-card">
-                <img src="Shower.png">
-                <h3>Rory X Shower Curtain</h3>
-                <span>£30.00</span>
-                <a href="pay.html?item=Rory%20X%20Shower%20Curtains&price=30.00" class="buy-now-btn">Buy Now</a>
+             <div class="product-card" data-product-name="Rory X Shower Curtain">
+                <div>
+                    <img src="Shower.png">
+                    <h3>Rory X Shower Curtain</h3>
+                    <span>£30.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Shower%20Curtains&price=30.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-            <div class="product-card">
-                <img src="10ozglass.png">
-                <h3>Rory X 10oz glass</h3>
-                <span>£10.00</span>
-                <a href="pay.html?item=Rory%20X%2010oz%20glass&price=10.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X 10oz glass">
+                <div>
+                    <img src="10ozglass.png">
+                    <h3>Rory X 10oz glass</h3>
+                    <span>£10.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%2010oz%20glass&price=10.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-            <div class="product-card">
-                <div class="slider-container">
-                    <div class="slides" id="mugSlider">
-                        <img src="mug 1.png">
-                        <img src="mug 2.png">
-                        <img src="mug 3.png">
+            <div class="product-card" data-product-name="Rory X Mug (3 Designs)">
+                <div>
+                    <div class="slider-container">
+                        <div class="slides" id="mugSlider">
+                            <img src="mug 1.png">
+                            <img src="mug 2.png">
+                            <img src="mug 3.png">
+                        </div>
                     </div>
+                    <div class="dot-container">
+                        <span class="dot active" onclick="manualMove(0)"></span>
+                        <span class="dot" onclick="manualMove(1)"></span>
+                        <span class="dot" onclick="manualMove(2)"></span>
+                    </div>
+                    <h3>Rory X Mug</h3>
+                    <span>£7.00</span>
                 </div>
-                <div class="dot-container">
-                    <span class="dot active" onclick="manualMove(0)"></span>
-                    <span class="dot" onclick="manualMove(1)"></span>
-                    <span class="dot" onclick="manualMove(2)"></span>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Mug%20(3%20Designs)&price=7.00" class="buy-now-btn">Buy Now</a>
                 </div>
-                <h3>Rory X Mug</h3>
-                <span>£7.00</span>
-                <a href="pay.html?item=Rory%20X%20Mug%20(3%20Designs)&price=7.00" class="buy-now-btn">Buy Now</a>
             </div>
         </div>
 
-       <div class="pagination">
-    <a href="Clothing & Accessories.html" style="color: #34c759; text-decoration: none; font-weight: 600; margin-right: 15px;">← Previous Page</a>
-    <a href="Clothing & Accessories.html" class="page-link">1</a>
-    <a href="Clothing & Accessories 2.html" class="page-link active">2</a>
-    <a href="Clothing & Accessories 3.html" class="page-link">3</a>
-    <a href="Clothing & Accessories 3.html" style="color: #34c759; text-decoration: none; font-weight: 600; margin-left: 15px;">Next Page →</a>
-</div>
+        <div class="pagination">
+            <a href="Clothing & Accessories.html" style="color: #34c759; text-decoration: none; font-weight: 600; margin-right: 15px;">← Previous Page</a>
+            <a href="Clothing & Accessories.html" class="page-link">1</a>
+            <a href="Clothing & Accessories 2.html" class="page-link active">2</a>
+            <a href="Clothing & Accessories 3.html" class="page-link">3</a>
+            <a href="Clothing & Accessories 3.html" style="color: #34c759; text-decoration: none; font-weight: 600; margin-left: 15px;">Next Page →</a>
+        </div>
+    </div>
 
     <footer>
         <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
@@ -187,6 +239,7 @@
     </footer>
 
     <script>
+        // --- Image Slider Logic ---
         let currentIndex = 0;
         const totalSlides = 3;
         let slideInterval;
@@ -214,6 +267,34 @@
         }
 
         startAutoSlide();
+
+        // --- Live Stock Tracker Logic ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
+            const containers = document.querySelectorAll('[data-product-name]');
+
+            containers.forEach(container => {
+                const prodName = container.getAttribute('data-product-name');
+                const btn = container.querySelector('.buy-now-btn');
+                const tagBox = container.querySelector('.stock-tag-container');
+
+                if (liveStock[prodName] !== undefined) {
+                    const count = parseInt(liveStock[prodName]);
+
+                    if (count <= 0) {
+                        tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
+                        btn.innerText = "Sold Out";
+                        btn.classList.add('disabled');
+                        btn.removeAttribute('href');
+                        btn.addEventListener('click', (e) => e.preventDefault());
+                    } else if (count <= 3) {
+                        tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
+                    } else {
+                        tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
