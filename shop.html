@@ -77,6 +77,9 @@
             text-align: center; 
             border: 1px solid #333; 
             transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .product-card:hover { transform: translateY(-8px); border-color: #444; }
@@ -99,12 +102,19 @@
             color: white; border: 1px solid #444; margin-bottom: 15px; outline: none;
         }
 
+        /* Stock Counter Styles */
+        .stock-tag { font-size: 11px; font-weight: 600; margin-bottom: 15px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
+        .in-stock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
+        .low-stock { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
+        .out-of-stock { color: #ff3b30; background: rgba(255, 59, 48, 0.1); }
+
         .buy-btn {
             width: 100%; padding: 14px; background: #2ecc71; color: white; 
             border: none; border-radius: 12px; font-weight: bold; cursor: pointer;
             transition: background 0.2s;
         }
         .buy-btn:hover { background: #27ae60; }
+        .buy-btn.disabled { background-color: #2c2c2e !important; color: #555 !important; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -125,62 +135,141 @@
     </nav>
 
     <div class="container">
-        <div class="product-card">
-            <div class="img-box"><img src="waterbottle.png" alt="Water"></div>
-            <h3>Dehydrated Water</h3>
-            <p class="price-text">£3.50</p>
-            <button class="buy-btn" onclick="goToPay('Dehydrated Water', '3.50')">Buy Now</button>
+        <div class="product-card" data-product-name="Dehydrated Water">
+            <div>
+                <div class="img-box"><img src="waterbottle.png" alt="Water"></div>
+                <h3>Dehydrated Water</h3>
+                <p class="price-text">£3.50</p>
+            </div>
+            <div>
+                <div class="stock-tag-container"></div>
+                <button class="buy-btn" onclick="goToPay('Dehydrated Water', '3.50')">Buy Now</button>
+            </div>
         </div>
 
-        <div class="product-card">
-            <div class="img-box"><img src="air.png" alt="Air"></div>
-            <h3>Air</h3>
-            <p id="airPriceLabel" class="price-text">£5.00</p>
-            <select id="airSize" onchange="updateAirPrice()">
-                <option value="5.00">Small - £5.00</option>
-                <option value="10.00">Medium - £10.00</option>
-                <option value="15.00">Large - £15.00</option>
-            </select>
-            <button class="buy-btn" onclick="buyAir()">Buy Now</button>
+        <div class="product-card" data-is-variant="true">
+            <div>
+                <div class="img-box"><img src="air.png" alt="Air"></div>
+                <h3>Air</h3>
+                <p id="airPriceLabel" class="price-text">£5.00</p>
+                <select id="airSize" onchange="updateAirPrice()">
+                    <option value="5.00">Small - £5.00</option>
+                    <option value="10.00">Medium - £10.00</option>
+                    <option value="15.00">Large - £15.00</option>
+                </select>
+            </div>
+            <div>
+                <div class="stock-tag-container" id="airStockContainer"></div>
+                <button id="airBuyBtn" class="buy-btn" onclick="buyAir()">Buy Now</button>
+            </div>
         </div>
 
-        <div class="product-card">
-            <div class="img-box"><img src="unlitfire.png" alt="Fire"></div>
-            <h3>Unlit Fire</h3>
-            <p class="price-text">£7.85</p>
-            <button class="buy-btn" onclick="goToPay('Unlit Fire', '7.85')">Buy Now</button>
+        <div class="product-card" data-product-name="Unlit Fire">
+            <div>
+                <div class="img-box"><img src="unlitfire.png" alt="Fire"></div>
+                <h3>Unlit Fire</h3>
+                <p class="price-text">£7.85</p>
+            </div>
+            <div>
+                <div class="stock-tag-container"></div>
+                <button class="buy-btn" onclick="goToPay('Unlit Fire', '7.85')">Buy Now</button>
+            </div>
         </div>
 
-        <div class="product-card">
-            <div class="img-box"><img src="Boxes.png" alt="Boxes"></div>
-            <h3>Boxes</h3>
-            <p class="price-text">£19.75</p>
-            <button class="buy-btn" onclick="goToPay('Boxes', '19.75')">Buy Now</button>
+        <div class="product-card" data-product-name="Boxes">
+            <div>
+                <div class="img-box"><img src="Boxes.png" alt="Boxes"></div>
+                <h3>Boxes</h3>
+                <p class="price-text">£19.75</p>
+            </div>
+            <div>
+                <div class="stock-tag-container"></div>
+                <button class="buy-btn" onclick="goToPay('Boxes', '19.75')">Buy Now</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Main function to send standard items to payment page
+        // --- Core Commerce Redirect System ---
         function goToPay(name, price) {
-            // encodes the name (e.g. replaces spaces with %20) and redirects
             window.location.href = `pay.html?item=${encodeURIComponent(name)}&price=${price}`;
         }
 
-        // Updates the label on the shop page when dropdown changes
         function updateAirPrice() {
             const price = document.getElementById('airSize').value;
             document.getElementById('airPriceLabel').innerText = "£" + price;
+            // Instantly refresh stock indicators for the variant chosen
+            checkLiveStock();
         }
 
-        // Special function for Air to include the selected size in the name
         function buyAir() {
             const dropdown = document.getElementById('airSize');
             const price = dropdown.value;
             const sizeLabel = dropdown.options[dropdown.selectedIndex].text.split(' - ')[0];
             
-            // Sends name as "Air (Small)" etc.
-            window.location.href = `pay.html?item=${encodeURIComponent('Air (' + sizeLabel + ')')}&price=${price}`;
+            goToPay('Air (' + sizeLabel + ')', price);
         }
+
+        // --- Live Stock Engine System ---
+        function checkLiveStock() {
+            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
+            
+            // 1. Process regular items
+            const standardCards = document.querySelectorAll('[data-product-name]');
+            standardCards.forEach(card => {
+                const name = card.getAttribute('data-product-name');
+                const btn = card.querySelector('.buy-btn');
+                const tagBox = card.querySelector('.stock-tag-container');
+
+                if (liveStock[name] !== undefined) {
+                    const count = parseInt(liveStock[name]);
+                    applyStockUI(count, btn, tagBox);
+                }
+            });
+
+            // 2. Process custom variant logic for Air dropdown selections
+            const airDropdown = document.getElementById('airSize');
+            if (airDropdown) {
+                const currentSize = airDropdown.options[airDropdown.selectedIndex].text.split(' - ')[0];
+                const airKeyName = `Air (${currentSize})`; // Maps exactly to database keys like "Air (Small)"
+                const airBtn = document.getElementById('airBuyBtn');
+                const airTagBox = document.getElementById('airStockContainer');
+
+                if (liveStock[airKeyName] !== undefined) {
+                    const count = parseInt(liveStock[airKeyName]);
+                    applyStockUI(count, airBtn, airTagBox);
+                } else {
+                    // Reset to standard if unconfigured
+                    airBtn.innerText = "Buy Now";
+                    airBtn.classList.remove('disabled');
+                    airBtn.disabled = false;
+                    airTagBox.innerHTML = "";
+                }
+            }
+        }
+
+        // Shared helper script for stock indicators layout state
+        function applyStockUI(count, buttonElement, tagBoxElement) {
+            if (count <= 0) {
+                tagBoxElement.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
+                buttonElement.innerText = "Sold Out";
+                buttonElement.classList.add('disabled');
+                buttonElement.disabled = true;
+            } else if (count <= 3) {
+                tagBoxElement.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
+                buttonElement.innerText = "Buy Now";
+                buttonElement.classList.remove('disabled');
+                buttonElement.disabled = false;
+            } else {
+                tagBoxElement.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
+                buttonElement.innerText = "Buy Now";
+                buttonElement.classList.remove('disabled');
+                buttonElement.disabled = false;
+            }
+        }
+
+        // Initialize script checks when document loads
+        document.addEventListener("DOMContentLoaded", checkLiveStock);
     </script>
 </body>
 </html>
