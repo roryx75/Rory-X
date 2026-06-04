@@ -43,14 +43,21 @@
         }
         .product-card img { width: 100%; height: 260px; object-fit: contain; margin-bottom: 30px; }
         .product-card h3 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
-        .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 35px; display: block; }
+        .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 15px; display: block; }
+
+        /* Stock Counter Styles */
+        .stock-tag { font-size: 13px; font-weight: 600; margin-bottom: 20px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
+        .in-stock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
+        .low-stock { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
+        .out-of-stock { color: #ff3b30; background: rgba(255, 59, 48, 0.1); }
 
         .buy-now-btn { 
             background-color: #34c759; color: white; padding: 16px 50px; 
             border-radius: 14px; text-decoration: none; font-weight: 600; 
-            font-size: 17px; transition: 0.3s; align-self: center;
+            font-size: 17px; transition: 0.3s; align-self: center; width: 100%; text-align: center; display: inline-block;
         }
         .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
+        .buy-now-btn.disabled { background-color: #222 !important; color: #555 !important; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
         .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 60px; align-items: center; width: 100%; }
         .page-link { background: rgba(255,255,255,0.08); color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; }
@@ -77,20 +84,32 @@
 
     <div class="page-wrapper">
         <div class="product-grid">
-            <div class="product-card">
-                <img src="Hoodie1,2.png">
-                <h3>Rory X Hoodie</h3>
-                <span>£15.00</span>
-                <a href="pay.html?item=Rory%20X%20Hoodie&price=15.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Hoodie">
+                <div>
+                    <img src="Hoodie1,2.png">
+                    <h3>Rory X Hoodie</h3>
+                    <span>£15.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Hoodie&price=15.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
 
-            <div class="product-card">
-                <img src="Jewelry Box.png">
-                <h3>Rory X Jewelry Box</h3>
-                <span>£15.00</span>
-                <a href="pay.html?item=Rory%20X%20Jewelry%20Box&price=15.00" class="buy-now-btn">Buy Now</a>
+            <div class="product-card" data-product-name="Rory X Jewelry Box">
+                <div>
+                    <img src="Jewelry Box.png">
+                    <h3>Rory X Jewelry Box</h3>
+                    <span>£15.00</span>
+                </div>
+                <div style="width: 100%;">
+                    <div class="stock-tag-container"></div>
+                    <a href="pay.html?item=Rory%20X%20Jewelry%20Box&price=15.00" class="buy-now-btn">Buy Now</a>
+                </div>
             </div>
-        </div> <div class="pagination">
+        </div> 
+        
+        <div class="pagination">
             <a href="Clothing & Accessories 2.html" style="color: #34c759; text-decoration: none; font-weight: 600; margin-right: 15px;">← Previous Page</a>
             <a href="Clothing & Accessories.html" class="page-link">1</a>
             <a href="Clothing & Accessories 2.html" class="page-link">2</a>
@@ -114,5 +133,35 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Read tracking metrics from shared browser local data arrays
+            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
+            const containers = document.querySelectorAll('[data-product-name]');
+
+            containers.forEach(container => {
+                const prodName = container.getAttribute('data-product-name');
+                const btn = container.querySelector('.buy-now-btn');
+                const tagBox = container.querySelector('.stock-tag-container');
+
+                if (liveStock[prodName] !== undefined) {
+                    const count = parseInt(liveStock[prodName]);
+
+                    if (count <= 0) {
+                        tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
+                        btn.innerText = "Sold Out";
+                        btn.classList.add('disabled');
+                        btn.removeAttribute('href');
+                        btn.addEventListener('click', (e) => e.preventDefault());
+                    } else if (count <= 3) {
+                        tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
+                    } else {
+                        tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
