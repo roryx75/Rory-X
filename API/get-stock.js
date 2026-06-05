@@ -1,11 +1,21 @@
-import { kv } from '@vercel/kv';
+import { createClient } from '@vercel/kv';
 
-export default async function handler(request, response) {
+export default async function handler(req, res) {
+    if (req.method !== 'GET') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
     try {
-        let stock = await kv.get('rory_x_stock');
-        if (!stock) stock = {};
-        return response.status(200).json(stock);
+        const kv = createClient({
+            url: process.env.KV_REST_API_URL || process.env.STORAGE_REST_API_URL,
+            token: process.env.KV_REST_API_TOKEN || process.env.STORAGE_REST_API_TOKEN,
+        });
+
+        // Pull the entire stock map object from Upstash Redis KV
+        const stockData = await kv.hgetall('roryx_master_stock') || {};
+        return res.status(200).json(stockData);
     } catch (error) {
-        return response.status(500).json({ error: error.message });
+        console.error(error);
+        return res.status(500).json({ error: 'Database read failure' });
     }
 }
