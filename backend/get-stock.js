@@ -9,7 +9,6 @@ export default async function handler(req, res) {
             token: process.env.KV_REST_API_TOKEN || process.env.STORAGE_REST_API_TOKEN,
         });
 
-        // Pull data from Upstash Redis KV. If it's empty, send an empty object back cleanly
         const stockData = await kv.get('roryx_master_stock') || {};
         return res.status(200).json(stockData);
     } catch (error) {
