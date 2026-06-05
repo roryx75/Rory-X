@@ -253,7 +253,7 @@
             panel.classList.toggle('open');
         }
 
-        function startPayment(provider) {
+        async function startPayment(provider) {
             const first = document.getElementById('fName').value.trim();
             const last = document.getElementById('lName').value.trim();
             const group = document.getElementById('tutor').value.trim();
@@ -270,7 +270,7 @@
 
             selectedProvider = provider; 
             
-            // Adjust label logic for Discord display logging if a promo was used
+            // Adjust label logic for central display logging if a promo was used
             let displayMethod = selectedProvider;
             if (currentCost === 0) {
                 displayMethod = selectedProvider + " (Promo Applied)";
@@ -278,7 +278,7 @@
 
             document.getElementById('loadingOverlay').style.display = 'flex';
 
-            const order = {
+            const orderPayload = {
                 customer: first + " " + last,
                 tutor: group,
                 item: product,
@@ -287,53 +287,71 @@
                 time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
-            let orders = JSON.parse(localStorage.getItem('rory_x_orders')) || [];
-            orders.push(order);
-            localStorage.setItem('rory_x_orders', JSON.stringify(orders));
+            try {
+                // Post order directly to your backend endpoint for logging and inventory adjustment
+                const response = await fetch('/api/submit-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
 
-            document.getElementById('cardNumber').value = "";
-            document.getElementById('cardExpiry').value = "";
-            document.getElementById('cardCvc').value = "";
-
-            let embedColor = 5025616; 
-            if(selectedProvider === "Google Pay") embedColor = 4359924;
-            if(selectedProvider === "Cash") embedColor = 3458880; 
-            if(selectedProvider === "Card") embedColor = 38834;
-
-            fetch("https://discord.com/api/webhooks/1508062425063231511/4t2kU_Xi8gZZ0ZUmZkrC_BIABXcCYpq2f8ySjGezxaNaFY2bSzUs4pNZFjkxujl0QWby", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    embeds: [{
-                        title: selectedProvider === "Cash" ? "💵 New Cash Order Submitted" : "✅ New Order Approved",
-                        description: `Payment via **${displayMethod}**`,
-                        color: embedColor, 
-                        fields: [
-                            { name: "Customer", value: order.customer, inline: true },
-                            { name: "Tutor", value: order.tutor, inline: true },
-                            { name: "Product", value: order.item, inline: false },
-                            { name: "Amount", value: order.price, inline: true }
-                        ],
-                        footer: { text: "Rory X | Orders • " + order.time }
-                    }]
-                })
-            });
-
-            setTimeout(() => {
-                document.getElementById('mainSpinner').style.display = 'none';
-                if(selectedProvider === "Cash") {
-                    document.getElementById('statusText').innerHTML = `
-                        <span style="color:#34c759; font-size:22px; font-weight:bold;">Order Submitted Successfully!</span><br><br>
-                        <span style="color:#a1a1a6; font-size:15px;">${currentCost === 0 ? 'Your free order is ready!' : 'Please bring your cash payment to school to complete your order.'}</span><br><br><br>
-                        <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
-                    `;
-                } else {
-                    document.getElementById('statusText').innerHTML = `
-                        <span style="color:#34c759; font-size:22px; font-weight:bold;">${selectedProvider} Approved Your Purchase!</span><br><br>
-                        <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
-                    `;
+                if (!response.ok) {
+                    const errorMsg = await response.text();
+                    throw new Error(errorMsg || 'Server rejected checkout transaction payload');
                 }
-            }, 2500);
+
+                // Clear input structures securely
+                document.getElementById('cardNumber').value = "";
+                document.getElementById('cardExpiry').value = "";
+                document.getElementById('cardCvc').value = "";
+
+                // Fire tracking communication to Discord dispatch asynchronously
+                let embedColor = 5025616; 
+                if(selectedProvider === "Google Pay") embedColor = 4359924;
+                if(selectedProvider === "Cash") embedColor = 3458880; 
+                if(selectedProvider === "Card") embedColor = 38834;
+
+                fetch("https://discord.com/api/webhooks/1508062425063231511/4t2kU_Xi8gZZ0ZUmZkrC_BIABXcCYpq2f8ySjGezxaNaFY2bSzUs4pNZFjkxujl0QWby", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: selectedProvider === "Cash" ? "💵 New Cash Order Submitted" : "✅ New Order Approved",
+                            description: `Payment via **${displayMethod}**`,
+                            color: embedColor, 
+                            fields: [
+                                { name: "Customer", value: orderPayload.customer, inline: true },
+                                { name: "Tutor", value: orderPayload.tutor, inline: true },
+                                { name: "Product", value: orderPayload.item, inline: false },
+                                { name: "Amount", value: orderPayload.price, inline: true }
+                            ],
+                            footer: { text: "Rory X | Orders • " + orderPayload.time }
+                        }]
+                    })
+                }).catch(err => console.error("Discord webhook update connection loss:", err));
+
+                // Present clean completion cards to the client
+                setTimeout(() => {
+                    document.getElementById('mainSpinner').style.display = 'none';
+                    if(selectedProvider === "Cash") {
+                        document.getElementById('statusText').innerHTML = `
+                            <span style="color:#34c759; font-size:22px; font-weight:bold;">Order Submitted Successfully!</span><br><br>
+                            <span style="color:#a1a1a6; font-size:15px;">${currentCost === 0 ? 'Your free order is ready!' : 'Please bring your cash payment to school to complete your order.'}</span><br><br><br>
+                            <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
+                        `;
+                    } else {
+                        document.getElementById('statusText').innerHTML = `
+                            <span style="color:#34c759; font-size:22px; font-weight:bold;">${selectedProvider} Approved Your Purchase!</span><br><br>
+                            <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
+                        `;
+                    }
+                }, 2500);
+
+            } catch (err) {
+                // Terminate gateway overlay layer and alert user of stock issues or communication blocks
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert("Checkout Transaction Error: " + err.message);
+            }
         }
 
         document.getElementById('appleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Apple Pay"); });
