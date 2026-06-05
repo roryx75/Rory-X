@@ -46,6 +46,7 @@
         .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 15px; display: block; }
 
         /* Stock Counter Styles */
+        .stock-tag-container { min-height: 25px; }
         .stock-tag { font-size: 13px; font-weight: 600; margin-bottom: 20px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
         .in-stock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
         .low-stock { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
@@ -93,7 +94,7 @@
     
     <div class="page-wrapper">
         <div class="product-grid">
-            <div class="product-card" data-product-name="Rory X Unisex Joggers (Black)">
+            <div class="product-card" data-product-name="Rory X Unisex Joggers (Black)" data-base-url="pay.html?item=Rory%20X%20Unisex%20Joggers%20(Black)&price=15.00">
                 <div>
                     <img src="Joggers (Black).png">
                     <h3>Rory X Unisex Joggers (Black)</h3>
@@ -105,7 +106,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Unisex Joggers (White)">
+            <div class="product-card" data-product-name="Rory X Unisex Joggers (White)" data-base-url="pay.html?item=Rory%20X%20Unisex%20Joggers%20(White)&price=15.00">
                 <div>
                     <img src="Joggers (White).png">
                     <h3>Rory X Unisex Joggers (White)</h3>
@@ -117,7 +118,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Socks (Black)">
+            <div class="product-card" data-product-name="Rory X Socks (Black)" data-base-url="pay.html?item=Rory%20X%20Socks%20(Black)&price=5.00">
                 <div>
                     <img src="Socks (Black).png">
                     <h3>Rory X Socks (Black)</h3>
@@ -129,7 +130,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Socks (White)">
+            <div class="product-card" data-product-name="Rory X Socks (White)" data-base-url="pay.html?item=Rory%20X%20Socks%20(White)&price=5.00">
                 <div>
                     <img src="Socks (White).png">
                     <h3>Rory X Socks (White)</h3>
@@ -141,7 +142,7 @@
                 </div>
             </div>
             
-            <div class="product-card" data-product-name="Rory X Sticker">
+            <div class="product-card" data-product-name="Rory X Sticker" data-base-url="pay.html?item=Rory%20X%20Sticker&price=3.00">
                 <div>
                     <img src="RoryXSticker.png">
                     <h3>Rory X Sticker</h3>
@@ -153,7 +154,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Hockey Puck">
+            <div class="product-card" data-product-name="Rory X Hockey Puck" data-base-url="pay.html?item=Rory%20X%20Hockey%20Puck&price=25.00">
                 <div>
                     <img src="Hockey.png">
                     <h3>Rory X Hockey Puck</h3>
@@ -165,7 +166,7 @@
                 </div>
             </div>
 
-             <div class="product-card" data-product-name="Rory X Shower Curtain">
+             <div class="product-card" data-product-name="Rory X Shower Curtain" data-base-url="pay.html?item=Rory%20X%20Shower%20Curtains&price=30.00">
                 <div>
                     <img src="Shower.png">
                     <h3>Rory X Shower Curtain</h3>
@@ -177,7 +178,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X 10oz glass">
+            <div class="product-card" data-product-name="Rory X 10oz glass" data-base-url="pay.html?item=Rory%20X%2010oz%20glass&price=10.00">
                 <div>
                     <img src="10ozglass.png">
                     <h3>Rory X 10oz glass</h3>
@@ -189,7 +190,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Mug (3 Designs)">
+            <div class="product-card" data-product-name="Rory X Mug (3 Designs)" data-base-url="pay.html?item=Rory%20X%20Mug%20(3%20Designs)&price=7.00">
                 <div>
                     <div class="slider-container">
                         <div class="slides" id="mugSlider">
@@ -255,6 +256,7 @@
             }
         }
 
+        /* Continuous cycle animation helper */
         function startAutoSlide() {
             slideInterval = setInterval(() => {
                 moveSlider((currentIndex + 1) % totalSlides);
@@ -269,32 +271,53 @@
 
         startAutoSlide();
 
-        // --- Live Stock Tracker Logic ---
-        document.addEventListener("DOMContentLoaded", () => {
-            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
-            const containers = document.querySelectorAll('[data-product-name]');
+        // --- Live Vercel KV Database Tracker Sync ---
+        async function fetchLiveStock() {
+            try {
+                const response = await fetch('/api/get-stock');
+                if (!response.ok) throw new Error('Database unreachable');
+                const liveStock = await response.json();
+                
+                const containers = document.querySelectorAll('[data-product-name]');
+                containers.forEach(container => {
+                    const prodName = container.getAttribute('data-product-name');
+                    const baseUrl = container.getAttribute('data-base-url');
+                    const btn = container.querySelector('.buy-now-btn');
+                    const tagBox = container.querySelector('.stock-tag-container');
 
-            containers.forEach(container => {
-                const prodName = container.getAttribute('data-product-name');
-                const btn = container.querySelector('.buy-now-btn');
-                const tagBox = container.querySelector('.stock-tag-container');
+                    if (liveStock[prodName] !== undefined) {
+                        const count = parseInt(liveStock[prodName]);
 
-                if (liveStock[prodName] !== undefined) {
-                    const count = parseInt(liveStock[prodName]);
-
-                    if (count <= 0) {
-                        tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
-                        btn.innerText = "Sold Out";
-                        btn.classList.add('disabled');
-                        btn.removeAttribute('href');
-                        btn.addEventListener('click', (e) => e.preventDefault());
-                    } else if (count <= 3) {
-                        tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
-                    } else {
-                        tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
+                        if (count <= 0) {
+                            tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
+                            btn.innerText = "Sold Out";
+                            btn.classList.add('disabled');
+                            btn.setAttribute('href', '#');
+                            btn.onclick = (e) => e.preventDefault();
+                        } else if (count <= 3) {
+                            tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
+                            btn.innerText = "Buy Now";
+                            btn.classList.remove('disabled');
+                            btn.setAttribute('href', baseUrl);
+                            btn.onclick = null;
+                        } else {
+                            tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
+                            btn.innerText = "Buy Now";
+                            btn.classList.remove('disabled');
+                            btn.setAttribute('href', baseUrl);
+                            btn.onclick = null;
+                        }
                     }
-                }
-            });
+                });
+            } catch (err) {
+                console.error("Live stock polling failed, retrying in next loop:", err);
+            }
+        }
+
+        // Initialize engine and poll database every 5 seconds
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchLiveStock();
+            setInterval(fetchLiveStock, 5000);
         });
     </script>
 </body>
