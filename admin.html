@@ -185,11 +185,11 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
-                // Fetch, mount, and render live data tables
-                renderStockRows();
+                // Fetch live server stock values and render into standard fields
+                renderLiveStock();
                 loadOrders();
                 
-                // Keep history log feed updated in real time via polling
+                // Poll the order logging stream automatically every 4 seconds
                 setInterval(loadOrders, 4000);
             } else {
                 const errorElement = document.getElementById('errorMessage');
@@ -198,11 +198,11 @@
             }
         }
 
-        // Pull current quantities from backend database and build UI inputs
-        async function renderStockRows() {
+        // Fetch current live metrics from Vercel KV and cleanly compile rows
+        async function renderLiveStock() {
             try {
                 const response = await fetch('/api/get-stock');
-                if (!response.ok) throw new Error('Could not pull active stock data');
+                if (!response.ok) throw new Error('Could not contact live stock pipeline');
                 const liveStock = await response.json();
                 
                 const shopTarget = document.getElementById('mainShopItems');
@@ -214,7 +214,9 @@
                 accTarget.innerHTML = '';
                 
                 catalogBlueprint.forEach(item => {
+                    // Use live KV data map; fall back to hardcoded default blueprint metric if database field is blank
                     const currentCount = liveStock[item.name] !== undefined ? liveStock[item.name] : item.defaultStock;
+                    
                     const row = document.createElement('div');
                     row.className = 'product-row';
                     row.innerHTML = `
@@ -227,73 +229,73 @@
                     else if (item.group === 'accessories') accTarget.appendChild(row);
                 });
             } catch (err) {
-                console.error("Error setting up inventory grid panel rows:", err);
+                console.error("Critical error building UI inventory grid rows:", err);
             }
         }
 
-        // Process Updates to API Server Database on Submission
+        // Intercept form data submission and push to live update-stock endpoint
         document.getElementById('inventoryForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            let targetMap = {};
+            let updateMap = {};
             
             formData.forEach((value, key) => {
-                targetMap[key] = parseInt(value) || 0;
+                updateMap[key] = parseInt(value) || 0;
             });
             
             try {
                 const response = await fetch('/api/update-stock', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(targetMap)
+                    body: JSON.stringify(updateMap)
                 });
 
-                if (!response.ok) throw new Error('Server rejected structural array sync parameters');
+                if (!response.ok) throw new Error('Server rejected sync payload requirements');
                 
-                // Show dynamic success alert toast window
+                // Pop up the validation notification toast
                 const toast = document.getElementById('saveToast');
                 toast.style.display = 'block';
                 setTimeout(() => { toast.style.display = 'none'; }, 3000);
                 
-                renderStockRows();
+                renderLiveStock();
             } catch (err) {
-                alert("Failed to write to central cloud database updates: " + err.message);
+                alert("Failed to write structural adjustments directly to server: " + err.message);
             }
         });
 
-        // Restore Catalog Array Factory Defaults directly to API routes
+        // Mass factory default restoration handoff to your server endpoints
         async function resetStockDefaults() {
-            if (confirm("Restore original catalog factory defaults? Current configurations will be lost.")) {
-                let resetMap = {};
+            if (confirm("Restore original catalog factory defaults? Current database records will be overwritten.")) {
+                let defaultMap = {};
                 catalogBlueprint.forEach(item => {
-                    resetMap[item.name] = item.defaultStock;
+                    defaultMap[item.name] = item.defaultStock;
                 });
 
                 try {
                     const response = await fetch('/api/update-stock', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(resetMap)
+                        body: JSON.stringify(defaultMap)
                     });
-                    if (!response.ok) throw new Error('Reset handoff aborted');
-                    renderStockRows();
+                    if (!response.ok) throw new Error('Database reset call failed');
+                    renderLiveStock();
                 } catch (err) {
-                    console.error("Database initialization fault code failure:", err);
+                    alert("Initialization error writing default matrices: " + err.message);
                 }
             }
         }
 
-        // Fetch live log streams from database API route
+        // Fetch transactional tracking logs directly from your storage route
         async function loadOrders() {
             try {
                 const response = await fetch('/api/get-orders');
-                if (!response.ok) throw new Error('Log retrieval pipeline failed');
+                if (!response.ok) throw new Error('Log retrieval pipeline failure');
                 const data = await response.json();
                 
                 const table = document.getElementById('orderList');
                 table.innerHTML = '';
                 
-                // Clone and invert array sequence directly to show latest logs first
+                // Reverse transaction arrays so the newest orders pop up instantly at the top
                 data.slice().reverse().forEach(o => {
                     let promoUsed = "None";
                     if (o.method && o.method.includes("(Promo Applied)")) {
@@ -312,19 +314,19 @@
                     `;
                 });
             } catch (err) {
-                console.error("Order log sync operation failed background cycle loop:", err);
+                console.error("Order background log polling cycle error:", err);
             }
         }
 
-        // Clear historical trace files via API endpoint execution
+        // Flush historical ledger logs from server database entirely
         async function handleClearLogs() {
-            if (confirm('Clear all order histories from server database?')) {
+            if (confirm('Clear all historical logs directly from the server database? This action is permanent.')) {
                 try {
                     const response = await fetch('/api/clear-orders', { method: 'POST' });
-                    if (!response.ok) throw new Error('Server clearing execution error');
+                    if (!response.ok) throw new Error('Server clearance execution fault code');
                     loadOrders();
                 } catch (err) {
-                    alert("Unable to flush log archives at this time: " + err.message);
+                    alert("Failed to drop historical logs: " + err.message);
                 }
             }
         }
