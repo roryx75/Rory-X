@@ -103,6 +103,7 @@
         }
 
         /* Stock Counter Styles */
+        .stock-tag-container { min-height: 21px; }
         .stock-tag { font-size: 11px; font-weight: 600; margin-bottom: 15px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
         .in-stock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
         .low-stock { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
@@ -195,7 +196,7 @@
         function updateAirPrice() {
             const price = document.getElementById('airSize').value;
             document.getElementById('airPriceLabel').innerText = "£" + price;
-            // Instantly refresh stock indicators for the variant chosen
+            // Instantly sync UI with selected database value
             checkLiveStock();
         }
 
@@ -207,45 +208,50 @@
             goToPay('Air (' + sizeLabel + ')', price);
         }
 
-        // --- Live Stock Engine System ---
-        function checkLiveStock() {
-            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
-            
-            // 1. Process regular items
-            const standardCards = document.querySelectorAll('[data-product-name]');
-            standardCards.forEach(card => {
-                const name = card.getAttribute('data-product-name');
-                const btn = card.querySelector('.buy-btn');
-                const tagBox = card.querySelector('.stock-tag-container');
+        // --- Live Database Tracking Sync Engine ---
+        async function checkLiveStock() {
+            try {
+                const response = await fetch('/api/get-stock');
+                if (!response.ok) throw new Error('Database response failed');
+                const liveStock = await response.json();
+                
+                // 1. Process standard cards
+                const standardCards = document.querySelectorAll('[data-product-name]');
+                standardCards.forEach(card => {
+                    const name = card.getAttribute('data-product-name');
+                    const btn = card.querySelector('.buy-btn');
+                    const tagBox = card.querySelector('.stock-tag-container');
 
-                if (liveStock[name] !== undefined) {
-                    const count = parseInt(liveStock[name]);
-                    applyStockUI(count, btn, tagBox);
+                    if (liveStock[name] !== undefined) {
+                        const count = parseInt(liveStock[name]);
+                        applyStockUI(count, btn, tagBox);
+                    }
+                });
+
+                // 2. Process variable Air card
+                const airDropdown = document.getElementById('airSize');
+                if (airDropdown) {
+                    const currentSize = airDropdown.options[airDropdown.selectedIndex].text.split(' - ')[0];
+                    const airKeyName = `Air (${currentSize})`; 
+                    const airBtn = document.getElementById('airBuyBtn');
+                    const airTagBox = document.getElementById('airStockContainer');
+
+                    if (liveStock[airKeyName] !== undefined) {
+                        const count = parseInt(liveStock[airKeyName]);
+                        applyStockUI(count, airBtn, airTagBox);
+                    } else {
+                        airBtn.innerText = "Buy Now";
+                        airBtn.classList.remove('disabled');
+                        airBtn.disabled = false;
+                        airTagBox.innerHTML = "";
+                    }
                 }
-            });
-
-            // 2. Process custom variant logic for Air dropdown selections
-            const airDropdown = document.getElementById('airSize');
-            if (airDropdown) {
-                const currentSize = airDropdown.options[airDropdown.selectedIndex].text.split(' - ')[0];
-                const airKeyName = `Air (${currentSize})`; // Maps exactly to database keys like "Air (Small)"
-                const airBtn = document.getElementById('airBuyBtn');
-                const airTagBox = document.getElementById('airStockContainer');
-
-                if (liveStock[airKeyName] !== undefined) {
-                    const count = parseInt(liveStock[airKeyName]);
-                    applyStockUI(count, airBtn, airTagBox);
-                } else {
-                    // Reset to standard if unconfigured
-                    airBtn.innerText = "Buy Now";
-                    airBtn.classList.remove('disabled');
-                    airBtn.disabled = false;
-                    airTagBox.innerHTML = "";
-                }
+            } catch (err) {
+                console.error("Live stock lookup failed, retrying on next pass:", err);
             }
         }
 
-        // Shared helper script for stock indicators layout state
+        // Shared helper script for stock layout states
         function applyStockUI(count, buttonElement, tagBoxElement) {
             if (count <= 0) {
                 tagBoxElement.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
@@ -265,8 +271,11 @@
             }
         }
 
-        // Initialize script checks when document loads
-        document.addEventListener("DOMContentLoaded", checkLiveStock);
+        // Initialize background network execution cycles
+        document.addEventListener("DOMContentLoaded", () => {
+            checkLiveStock();
+            setInterval(checkLiveStock, 5000);
+        });
     </script>
 </body>
 </html>
