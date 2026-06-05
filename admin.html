@@ -185,12 +185,10 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
-                // Render input layout blocks safely
+                // Construct fields visually without parsing early calls
                 renderLiveStockGrid();
-                
-                // Load operational histories
                 loadOrders();
-                setInterval(loadOrders, 4000);
+                setInterval(loadOrders, 5000);
             } else {
                 const errorElement = document.getElementById('errorMessage');
                 errorElement.style.display = 'block';
@@ -198,7 +196,7 @@
             }
         }
 
-        // Generate input rows cleanly before mapping database state values
+        // Render input structures statically
         function renderLiveStockGrid() {
             const shopTarget = document.getElementById('mainShopItems');
             const clothingTarget = document.getElementById('clothingItems');
@@ -211,7 +209,6 @@
             catalogBlueprint.forEach(item => {
                 const row = document.createElement('div');
                 row.className = 'product-row';
-                // Dynamic safe ID tagging generation using standard base64 hashing rules
                 row.innerHTML = `
                     <span class="product-label">${item.name}</span>
                     <input type="number" min="0" max="999" id="stock_${btoa(item.name).replace(/=/g, '')}" value="0">
@@ -222,35 +219,35 @@
                 else if (item.group === 'accessories') accTarget.appendChild(row);
             });
 
-            // Call database fetch parameters now that DOM target objects exist
+            // Map values once inputs exist
             fetchLiveStockValues();
         }
 
-        // Pull active metrics from lowercase /api/get-stock route safely
+        // Fetch current records from Upstash database
         async function fetchLiveStockValues() {
             try {
                 const response = await fetch('/api/get-stock');
-                if (!response.ok) return; 
+                if (!response.ok) return;
                 
                 const liveStock = await response.json();
                 
                 catalogBlueprint.forEach(item => {
                     const inputElement = document.getElementById(`stock_${btoa(item.name).replace(/=/g, '')}`);
                     if (inputElement) {
-                        // Use live metrics if found, else fall back gracefully to original layout defaults
                         inputElement.value = liveStock[item.name] !== undefined ? liveStock[item.name] : item.defaultStock;
                     }
                 });
             } catch (err) {
-                console.log("Database lookup caught clean state. Awaiting execution updates.");
+                console.log("Database lookup standby.");
             }
         }
 
-        // Push customized data properties to your server database backend mapping
-        document.getElementById('inventoryForm').addEventListener('submit', async (e) => {
+        // Explicit submit event interception mapping
+        document.getElementById('inventoryForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            let updateMap = {};
+            e.stopPropagation(); // Stops accidental bubble triggering
             
+            let updateMap = {};
             catalogBlueprint.forEach(item => {
                 const inputElement = document.getElementById(`stock_${btoa(item.name).replace(/=/g, '')}`);
                 if (inputElement) {
@@ -265,7 +262,7 @@
                     body: JSON.stringify(updateMap)
                 });
 
-                if (!response.ok) throw new Error('Server rejected sync payload requirements');
+                if (!response.ok) throw new Error('Server sync parameter error');
                 
                 const toast = document.getElementById('saveToast');
                 toast.style.display = 'block';
@@ -275,11 +272,10 @@
             }
         });
 
-        // Pull backup counts and force automatic live update sync to clear any zeroed out states
+        // Mass baseline reset update handler
         async function resetStockDefaults() {
             if (confirm("Restore original catalog factory defaults? Current database records will be overwritten.")) {
                 let defaultMap = {};
-                
                 catalogBlueprint.forEach(item => {
                     defaultMap[item.name] = item.defaultStock;
                     const inputElement = document.getElementById(`stock_${btoa(item.name).replace(/=/g, '')}`);
@@ -292,15 +288,15 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(defaultMap)
                     });
-                    if (!response.ok) throw new Error('Database reset call failed');
-                    alert("All 22 product quantities have been updated and synced to defaults successfully!");
+                    if (!response.ok) throw new Error('Database reset handler failed');
+                    alert("All quantities successfully updated to factory defaults!");
                 } catch (err) {
                     alert("Initialization error writing default matrices: " + err.message);
                 }
             }
         }
 
-        // Fetch transactional log indexes from live server endpoints
+        // Order tracing logs fetching loop
         async function loadOrders() {
             try {
                 const response = await fetch('/api/get-orders');
@@ -328,16 +324,16 @@
                     `;
                 });
             } catch (err) {
-                console.error("Order background log polling cycle error:", err);
+                console.error("Logs update loop fault:", err);
             }
         }
 
-        // Clear tracking structures directly out of database ledger files
+        // Flush database tracking arrays entirely
         async function handleClearLogs() {
             if (confirm('Clear all historical logs directly from the server database? This action is permanent.')) {
                 try {
                     const response = await fetch('/api/clear-orders', { method: 'POST' });
-                    if (!response.ok) throw new Error('Server clearance execution fault code');
+                    if (!response.ok) throw new Error('Clear endpoint error');
                     loadOrders();
                 } catch (err) {
                     alert("Failed to drop historical logs: " + err.message);
