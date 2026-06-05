@@ -88,7 +88,7 @@
             <h1>Rory X Admin Dashboard</h1>
             <div class="header-actions">
                 <button class="exit-btn" onclick="window.location.href='index.html'">Exit</button>
-                <button class="clear-btn" onclick="if(confirm('Clear all order histories?')) { localStorage.removeItem('rory_x_orders'); loadOrders(); }">Clear Log</button>
+                <button class="clear-btn" onclick="handleClearLogs()">Clear Log</button>
             </div>
         </div>
 
@@ -185,13 +185,12 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
-                // Initialize Engine Database and Layout UI
-                initializeStockDatabase();
+                // Fetch, mount, and render live data tables
                 renderStockRows();
                 loadOrders();
                 
-                // Keep history dynamic log feed updated live
-                setInterval(loadOrders, 2000);
+                // Keep history log feed updated in real time via polling
+                setInterval(loadOrders, 4000);
             } else {
                 const errorElement = document.getElementById('errorMessage');
                 errorElement.style.display = 'block';
@@ -199,54 +198,41 @@
             }
         }
 
-        // Initialize Shared Database Array Structures
-        function initializeStockDatabase() {
-            let existingStock = localStorage.getItem('rory_x_stock');
-            let currentMap = existingStock ? JSON.parse(existingStock) : {};
-            let updated = false;
-
-            // Make sure newly added items inherit defaults if missing
-            catalogBlueprint.forEach(item => {
-                if (currentMap[item.name] === undefined) {
-                    currentMap[item.name] = item.defaultStock;
-                    updated = true;
-                }
-            });
-
-            if (!existingStock || updated) {
-                localStorage.setItem('rory_x_stock', JSON.stringify(currentMap));
+        // Pull current quantities from backend database and build UI inputs
+        async function renderStockRows() {
+            try {
+                const response = await fetch('/api/get-stock');
+                if (!response.ok) throw new Error('Could not pull active stock data');
+                const liveStock = await response.json();
+                
+                const shopTarget = document.getElementById('mainShopItems');
+                const clothingTarget = document.getElementById('clothingItems');
+                const accTarget = document.getElementById('accessoriesItems');
+                
+                shopTarget.innerHTML = '';
+                clothingTarget.innerHTML = '';
+                accTarget.innerHTML = '';
+                
+                catalogBlueprint.forEach(item => {
+                    const currentCount = liveStock[item.name] !== undefined ? liveStock[item.name] : item.defaultStock;
+                    const row = document.createElement('div');
+                    row.className = 'product-row';
+                    row.innerHTML = `
+                        <span class="product-label">${item.name}</span>
+                        <input type="number" min="0" max="999" name="${item.name}" value="${currentCount}">
+                    `;
+                    
+                    if (item.group === 'shop') shopTarget.appendChild(row);
+                    else if (item.group === 'clothing') clothingTarget.appendChild(row);
+                    else if (item.group === 'accessories') accTarget.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error setting up inventory grid panel rows:", err);
             }
         }
 
-        // Render Controls Cleanly inside Form Brackets
-        function renderStockRows() {
-            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
-            
-            const shopTarget = document.getElementById('mainShopItems');
-            const clothingTarget = document.getElementById('clothingItems');
-            const accTarget = document.getElementById('accessoriesItems');
-            
-            shopTarget.innerHTML = '';
-            clothingTarget.innerHTML = '';
-            accTarget.innerHTML = '';
-            
-            catalogBlueprint.forEach(item => {
-                const currentCount = liveStock[item.name] !== undefined ? liveStock[item.name] : item.defaultStock;
-                const row = document.createElement('div');
-                row.className = 'product-row';
-                row.innerHTML = `
-                    <span class="product-label">${item.name}</span>
-                    <input type="number" min="0" max="999" name="${item.name}" value="${currentCount}">
-                `;
-                
-                if (item.group === 'shop') shopTarget.appendChild(row);
-                else if (item.group === 'clothing') clothingTarget.appendChild(row);
-                else if (item.group === 'accessories') accTarget.appendChild(row);
-            });
-        }
-
-        // Process Updates to Local Storage Matrix on Submission
-        document.getElementById('inventoryForm').addEventListener('submit', (e) => {
+        // Process Updates to API Server Database on Submission
+        document.getElementById('inventoryForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             let targetMap = {};
@@ -255,52 +241,92 @@
                 targetMap[key] = parseInt(value) || 0;
             });
             
-            localStorage.setItem('rory_x_stock', JSON.stringify(targetMap));
-            
-            // Pop Active Success Toast Alert Window
-            const toast = document.getElementById('saveToast');
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
-            
-            renderStockRows();
+            try {
+                const response = await fetch('/api/update-stock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(targetMap)
+                });
+
+                if (!response.ok) throw new Error('Server rejected structural array sync parameters');
+                
+                // Show dynamic success alert toast window
+                const toast = document.getElementById('saveToast');
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; }, 3000);
+                
+                renderStockRows();
+            } catch (err) {
+                alert("Failed to write to central cloud database updates: " + err.message);
+            }
         });
 
-        // Restore Catalog Array Defaults
-        function resetStockDefaults() {
+        // Restore Catalog Array Factory Defaults directly to API routes
+        async function resetStockDefaults() {
             if (confirm("Restore original catalog factory defaults? Current configurations will be lost.")) {
                 let resetMap = {};
                 catalogBlueprint.forEach(item => {
                     resetMap[item.name] = item.defaultStock;
                 });
-                localStorage.setItem('rory_x_stock', JSON.stringify(resetMap));
-                renderStockRows();
+
+                try {
+                    const response = await fetch('/api/update-stock', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(resetMap)
+                    });
+                    if (!response.ok) throw new Error('Reset handoff aborted');
+                    renderStockRows();
+                } catch (err) {
+                    console.error("Database initialization fault code failure:", err);
+                }
             }
         }
 
-        // Operational Logging System
-        function loadOrders() {
-            const table = document.getElementById('orderList');
-            const data = JSON.parse(localStorage.getItem('rory_x_orders')) || [];
-            
-            table.innerHTML = '';
-            data.slice().reverse().forEach(o => {
-                // Determine if a promo code was attached to the payment method label
-                let promoUsed = "None";
-                if (o.method && o.method.includes("(Promo Applied)")) {
-                    promoUsed = `<span class="promo-tag">FREE10</span>`;
-                }
+        // Fetch live log streams from database API route
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/get-orders');
+                if (!response.ok) throw new Error('Log retrieval pipeline failed');
+                const data = await response.json();
+                
+                const table = document.getElementById('orderList');
+                table.innerHTML = '';
+                
+                // Clone and invert array sequence directly to show latest logs first
+                data.slice().reverse().forEach(o => {
+                    let promoUsed = "None";
+                    if (o.method && o.method.includes("(Promo Applied)")) {
+                        promoUsed = `<span class="promo-tag">FREE10</span>`;
+                    }
 
-                table.innerHTML += `
-                    <tr>
-                        <td><b>${o.item || 'Unknown Item'}</b></td>
-                        <td>${o.customer || 'Anonymous'}</td>
-                        <td>${o.tutor || 'N/A'}</td>
-                        <td>${promoUsed}</td> 
-                        <td>${o.time || '--:--'}</td>
-                        <td><span class="status-tag">${o.method && o.method.includes('Cash') ? 'PENDING CASH' : 'PAID'}</span></td>
-                    </tr>
-                `;
-            });
+                    table.innerHTML += `
+                        <tr>
+                            <td><b>${o.item || 'Unknown Item'}</b></td>
+                            <td>${o.customer || 'Anonymous'}</td>
+                            <td>${o.tutor || 'N/A'}</td>
+                            <td>${promoUsed}</td> 
+                            <td>${o.time || '--:--'}</td>
+                            <td><span class="status-tag">${o.method && o.method.includes('Cash') ? 'PENDING CASH' : 'PAID'}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Order log sync operation failed background cycle loop:", err);
+            }
+        }
+
+        // Clear historical trace files via API endpoint execution
+        async function handleClearLogs() {
+            if (confirm('Clear all order histories from server database?')) {
+                try {
+                    const response = await fetch('/api/clear-orders', { method: 'POST' });
+                    if (!response.ok) throw new Error('Server clearing execution error');
+                    loadOrders();
+                } catch (err) {
+                    alert("Unable to flush log archives at this time: " + err.message);
+                }
+            }
         }
     </script>
 </body>
