@@ -46,6 +46,7 @@
         .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 15px; display: block; }
 
         /* Stock Counter Styles */
+        .stock-tag-container { min-height: 25px; }
         .stock-tag { font-size: 13px; font-weight: 600; margin-bottom: 20px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
         .in-stock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
         .low-stock { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
@@ -85,7 +86,7 @@
 
     <div class="page-wrapper">
         <div class="product-grid">
-            <div class="product-card" data-product-name="Rory X Hoodie">
+            <div class="product-card" data-product-name="Rory X Hoodie" data-base-url="pay.html?item=Rory%20X%20Hoodie&price=15.00">
                 <div>
                     <img src="Hoodie1,2.png">
                     <h3>Rory X Hoodie</h3>
@@ -97,7 +98,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Jewelry Box">
+            <div class="product-card" data-product-name="Rory X Jewelry Box" data-base-url="pay.html?item=Rory%20X%20Jewelry%20Box&price=15.00">
                 <div>
                     <img src="Jewelry Box.png">
                     <h3>Rory X Jewelry Box</h3>
@@ -136,32 +137,53 @@
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Read tracking metrics from shared browser local data arrays
-            const liveStock = JSON.parse(localStorage.getItem('rory_x_stock')) || {};
-            const containers = document.querySelectorAll('[data-product-name]');
+        // --- Live Database Synchronizer Logic ---
+        async function fetchLiveStock() {
+            try {
+                const response = await fetch('/api/get-stock');
+                if (!response.ok) throw new Error('API fetch error');
+                const liveStock = await response.json();
+                
+                const containers = document.querySelectorAll('[data-product-name]');
+                containers.forEach(container => {
+                    const prodName = container.getAttribute('data-product-name');
+                    const baseUrl = container.getAttribute('data-base-url');
+                    const btn = container.querySelector('.buy-now-btn');
+                    const tagBox = container.querySelector('.stock-tag-container');
 
-            containers.forEach(container => {
-                const prodName = container.getAttribute('data-product-name');
-                const btn = container.querySelector('.buy-now-btn');
-                const tagBox = container.querySelector('.stock-tag-container');
+                    if (liveStock[prodName] !== undefined) {
+                        const count = parseInt(liveStock[prodName]);
 
-                if (liveStock[prodName] !== undefined) {
-                    const count = parseInt(liveStock[prodName]);
-
-                    if (count <= 0) {
-                        tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
-                        btn.innerText = "Sold Out";
-                        btn.classList.add('disabled');
-                        btn.removeAttribute('href');
-                        btn.addEventListener('click', (e) => e.preventDefault());
-                    } else if (count <= 3) {
-                        tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
-                    } else {
-                        tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
+                        if (count <= 0) {
+                            tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
+                            btn.innerText = "Sold Out";
+                            btn.classList.add('disabled');
+                            btn.setAttribute('href', '#');
+                            btn.onclick = (e) => e.preventDefault();
+                        } else if (count <= 3) {
+                            tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
+                            btn.innerText = "Buy Now";
+                            btn.classList.remove('disabled');
+                            btn.setAttribute('href', baseUrl);
+                            btn.onclick = null;
+                        } else {
+                            tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
+                            btn.innerText = "Buy Now";
+                            btn.classList.remove('disabled');
+                            btn.setAttribute('href', baseUrl);
+                            btn.onclick = null;
+                        }
                     }
-                }
-            });
+                });
+            } catch (err) {
+                console.error("Live stock lookup failed, retrying on next pass:", err);
+            }
+        }
+
+        // Initialize script execution and check every 5 seconds
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchLiveStock();
+            setInterval(fetchLiveStock, 5000);
         });
     </script>
 </body>
