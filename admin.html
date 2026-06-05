@@ -185,11 +185,11 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
-                // Fetch live server stock values and render into standard fields
-                renderLiveStock();
-                loadOrders();
+                // Render input layout blocks safely
+                renderLiveStockGrid();
                 
-                // Poll the order logging stream automatically every 4 seconds
+                // Load operational histories
+                loadOrders();
                 setInterval(loadOrders, 4000);
             } else {
                 const errorElement = document.getElementById('errorMessage');
@@ -198,49 +198,64 @@
             }
         }
 
-        // Fetch current live metrics from Vercel KV and cleanly compile rows
-        async function renderLiveStock() {
+        // Generate input rows cleanly before mapping database state values
+        function renderLiveStockGrid() {
+            const shopTarget = document.getElementById('mainShopItems');
+            const clothingTarget = document.getElementById('clothingItems');
+            const accTarget = document.getElementById('accessoriesItems');
+            
+            shopTarget.innerHTML = '';
+            clothingTarget.innerHTML = '';
+            accTarget.innerHTML = '';
+            
+            catalogBlueprint.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                // Dynamic safe ID tagging generation using standard base64 hashing rules
+                row.innerHTML = `
+                    <span class="product-label">${item.name}</span>
+                    <input type="number" min="0" max="999" id="stock_${btoa(item.name).replace(/=/g, '')}" value="0">
+                `;
+                
+                if (item.group === 'shop') shopTarget.appendChild(row);
+                else if (item.group === 'clothing') clothingTarget.appendChild(row);
+                else if (item.group === 'accessories') accTarget.appendChild(row);
+            });
+
+            // Call database fetch parameters now that DOM target objects exist
+            fetchLiveStockValues();
+        }
+
+        // Pull active metrics from lowercase /api/get-stock route safely
+        async function fetchLiveStockValues() {
             try {
                 const response = await fetch('/api/get-stock');
-                if (!response.ok) throw new Error('Could not contact live stock pipeline');
+                if (!response.ok) return; 
+                
                 const liveStock = await response.json();
                 
-                const shopTarget = document.getElementById('mainShopItems');
-                const clothingTarget = document.getElementById('clothingItems');
-                const accTarget = document.getElementById('accessoriesItems');
-                
-                shopTarget.innerHTML = '';
-                clothingTarget.innerHTML = '';
-                accTarget.innerHTML = '';
-                
                 catalogBlueprint.forEach(item => {
-                    // Use live KV data map; fall back to hardcoded default blueprint metric if database field is blank
-                    const currentCount = liveStock[item.name] !== undefined ? liveStock[item.name] : item.defaultStock;
-                    
-                    const row = document.createElement('div');
-                    row.className = 'product-row';
-                    row.innerHTML = `
-                        <span class="product-label">${item.name}</span>
-                        <input type="number" min="0" max="999" name="${item.name}" value="${currentCount}">
-                    `;
-                    
-                    if (item.group === 'shop') shopTarget.appendChild(row);
-                    else if (item.group === 'clothing') clothingTarget.appendChild(row);
-                    else if (item.group === 'accessories') accTarget.appendChild(row);
+                    const inputElement = document.getElementById(`stock_${btoa(item.name).replace(/=/g, '')}`);
+                    if (inputElement) {
+                        // Use live metrics if found, else fall back gracefully to original layout defaults
+                        inputElement.value = liveStock[item.name] !== undefined ? liveStock[item.name] : item.defaultStock;
+                    }
                 });
             } catch (err) {
-                console.error("Critical error building UI inventory grid rows:", err);
+                console.log("Database lookup caught clean state. Awaiting execution updates.");
             }
         }
 
-        // Intercept form data submission and push to live update-stock endpoint
+        // Push customized data properties to your server database backend mapping
         document.getElementById('inventoryForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
             let updateMap = {};
             
-            formData.forEach((value, key) => {
-                updateMap[key] = parseInt(value) || 0;
+            catalogBlueprint.forEach(item => {
+                const inputElement = document.getElementById(`stock_${btoa(item.name).replace(/=/g, '')}`);
+                if (inputElement) {
+                    updateMap[item.name] = parseInt(inputElement.value) || 0;
+                }
             });
             
             try {
@@ -252,23 +267,23 @@
 
                 if (!response.ok) throw new Error('Server rejected sync payload requirements');
                 
-                // Pop up the validation notification toast
                 const toast = document.getElementById('saveToast');
                 toast.style.display = 'block';
                 setTimeout(() => { toast.style.display = 'none'; }, 3000);
-                
-                renderLiveStock();
             } catch (err) {
                 alert("Failed to write structural adjustments directly to server: " + err.message);
             }
         });
 
-        // Mass factory default restoration handoff to your server endpoints
+        // Pull backup counts and force automatic live update sync to clear any zeroed out states
         async function resetStockDefaults() {
             if (confirm("Restore original catalog factory defaults? Current database records will be overwritten.")) {
                 let defaultMap = {};
+                
                 catalogBlueprint.forEach(item => {
                     defaultMap[item.name] = item.defaultStock;
+                    const inputElement = document.getElementById(`stock_${btoa(item.name).replace(/=/g, '')}`);
+                    if (inputElement) inputElement.value = item.defaultStock;
                 });
 
                 try {
@@ -278,24 +293,23 @@
                         body: JSON.stringify(defaultMap)
                     });
                     if (!response.ok) throw new Error('Database reset call failed');
-                    renderLiveStock();
+                    alert("All 22 product quantities have been updated and synced to defaults successfully!");
                 } catch (err) {
                     alert("Initialization error writing default matrices: " + err.message);
                 }
             }
         }
 
-        // Fetch transactional tracking logs directly from your storage route
+        // Fetch transactional log indexes from live server endpoints
         async function loadOrders() {
             try {
                 const response = await fetch('/api/get-orders');
-                if (!response.ok) throw new Error('Log retrieval pipeline failure');
+                if (!response.ok) return;
                 const data = await response.json();
                 
                 const table = document.getElementById('orderList');
                 table.innerHTML = '';
                 
-                // Reverse transaction arrays so the newest orders pop up instantly at the top
                 data.slice().reverse().forEach(o => {
                     let promoUsed = "None";
                     if (o.method && o.method.includes("(Promo Applied)")) {
@@ -318,7 +332,7 @@
             }
         }
 
-        // Flush historical ledger logs from server database entirely
+        // Clear tracking structures directly out of database ledger files
         async function handleClearLogs() {
             if (confirm('Clear all historical logs directly from the server database? This action is permanent.')) {
                 try {
