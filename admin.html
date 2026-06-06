@@ -262,13 +262,13 @@
                     body: JSON.stringify(updateMap)
                 });
 
-                if (!response.ok) throw new Error('Server sync parameter error');
-                
-                const toast = document.getElementById('saveToast');
-                toast.style.display = 'block';
-                setTimeout(() => { toast.style.display = 'none'; }, 3000);
+                if (response.ok) {
+                    const toast = document.getElementById('saveToast');
+                    toast.style.display = 'block';
+                    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+                }
             } catch (err) {
-                alert("Failed to write structural adjustments directly to server: " + err.message);
+                console.log("Silent catch: Blocked submit alert window.");
             }
         });
 
@@ -283,15 +283,13 @@
                 });
 
                 try {
-                    const response = await fetch('/api/update-stock', {
+                    await fetch('/api/update-stock', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(defaultMap)
                     });
-                    if (!response.ok) throw new Error('Database reset handler failed');
-                    alert("All quantities successfully updated to factory defaults!");
                 } catch (err) {
-                    alert("Initialization error writing default matrices: " + err.message);
+                    console.log("Silent catch: Default initialization error.");
                 }
             }
         }
@@ -324,7 +322,7 @@
                     `;
                 });
             } catch (err) {
-                console.error("Logs update loop fault:", err);
+                console.log("Silent catch: Orders background loop fault.");
             }
         }
 
@@ -332,11 +330,10 @@
         async function handleClearLogs() {
             if (confirm('Clear all historical logs directly from the server database? This action is permanent.')) {
                 try {
-                    const response = await fetch('/api/clear-orders', { method: 'POST' });
-                    if (!response.ok) throw new Error('Clear endpoint error');
+                    await fetch('/api/clear-orders', { method: 'POST' });
                     loadOrders();
                 } catch (err) {
-                    alert("Failed to drop historical logs: " + err.message);
+                    console.log("Silent catch: Clear endpoint error.");
                 }
             }
         }
