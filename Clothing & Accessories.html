@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clothing & Accessories | Rory X</title>
-    <link rel="icon" type="image/png" href="RoryX.png">
+    <link class="icon" type="image/png" href="RoryX.png">
     <style>
         /* Mobile Fix */
         @media (max-width: 768px) {
@@ -189,7 +189,8 @@
         // Real-Time Database Sync Engine 
         async function fetchLiveStock() {
             try {
-                const response = await fetch('/api/get-stock');
+                // Appending a timestamp query string bypasses aggressive phone cache layers
+                const response = await fetch('/api/get-stock?t=' + Date.now());
                 if (!response.ok) throw new Error('Network issue');
                 const liveStock = await response.json();
                 
@@ -200,11 +201,11 @@
                     const btn = container.querySelector('.buy-now-btn');
                     const tagBox = container.querySelector('.stock-tag-container');
 
-                    // If database has an entry for this product, process it
-                    if (liveStock[prodName] !== undefined) {
+                    // Strict key-existence verification allows zero (0) to map out cleanly
+                    if (liveStock && Object.prototype.hasOwnProperty.call(liveStock, prodName)) {
                         const count = parseInt(liveStock[prodName]);
 
-                        if (count <= 0) {
+                        if (count <= 0 || isNaN(count)) {
                             tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
                             btn.innerText = "Sold Out";
                             btn.classList.add('disabled');
