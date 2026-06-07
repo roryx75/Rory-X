@@ -211,7 +211,8 @@
         // --- Live Database Tracking Sync Engine ---
         async function checkLiveStock() {
             try {
-                const response = await fetch('/api/get-stock');
+                // Appending the timestamp breaks cache retention across iOS and Android browsers
+                const response = await fetch('/api/get-stock?t=' + Date.now());
                 if (!response.ok) throw new Error('Database response failed');
                 const liveStock = await response.json();
                 
@@ -222,7 +223,7 @@
                     const btn = card.querySelector('.buy-btn');
                     const tagBox = card.querySelector('.stock-tag-container');
 
-                    if (liveStock[name] !== undefined) {
+                    if (liveStock && Object.prototype.hasOwnProperty.call(liveStock, name)) {
                         const count = parseInt(liveStock[name]);
                         applyStockUI(count, btn, tagBox);
                     }
@@ -236,7 +237,7 @@
                     const airBtn = document.getElementById('airBuyBtn');
                     const airTagBox = document.getElementById('airStockContainer');
 
-                    if (liveStock[airKeyName] !== undefined) {
+                    if (liveStock && Object.prototype.hasOwnProperty.call(liveStock, airKeyName)) {
                         const count = parseInt(liveStock[airKeyName]);
                         applyStockUI(count, airBtn, airTagBox);
                     } else {
@@ -253,7 +254,7 @@
 
         // Shared helper script for stock layout states
         function applyStockUI(count, buttonElement, tagBoxElement) {
-            if (count <= 0) {
+            if (count <= 0 || isNaN(count)) {
                 tagBoxElement.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
                 buttonElement.innerText = "Sold Out";
                 buttonElement.classList.add('disabled');
