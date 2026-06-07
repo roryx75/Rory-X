@@ -274,7 +274,8 @@
         // --- Live Vercel KV Database Tracker Sync ---
         async function fetchLiveStock() {
             try {
-                const response = await fetch('/api/get-stock');
+                // Appending a timestamp query string bypasses any aggressive phone/safari cache systems
+                const response = await fetch('/api/get-stock?t=' + Date.now());
                 if (!response.ok) throw new Error('Database unreachable');
                 const liveStock = await response.json();
                 
@@ -285,10 +286,11 @@
                     const btn = container.querySelector('.buy-now-btn');
                     const tagBox = container.querySelector('.stock-tag-container');
 
-                    if (liveStock[prodName] !== undefined) {
+                    // Air-tight check that properly reads 0 instead of skipping it
+                    if (liveStock && Object.prototype.hasOwnProperty.call(liveStock, prodName)) {
                         const count = parseInt(liveStock[prodName]);
 
-                        if (count <= 0) {
+                        if (count <= 0 || isNaN(count)) {
                             tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
                             btn.innerText = "Sold Out";
                             btn.classList.add('disabled');
