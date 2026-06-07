@@ -133,25 +133,19 @@
     </div>
 
     <script>
-        // Master Catalog Blueprint Registry containing ALL 22 products
         const catalogBlueprint = [
-            // --- MAIN SHOP PAGE ---
             { name: "Dehydrated Water", defaultStock: 15, group: "shop" },
             { name: "Air (Small)", defaultStock: 10, group: "shop" },
             { name: "Air (Medium)", defaultStock: 10, group: "shop" },
             { name: "Air (Large)", defaultStock: 5, group: "shop" },
             { name: "Unlit Fire", defaultStock: 8, group: "shop" },
             { name: "Boxes", defaultStock: 20, group: "shop" },
-            
-            // --- CLOTHING & ACCESSORIES PAGE 1 ---
             { name: "Rory X Hat", defaultStock: 12, group: "clothing" },
             { name: "Rory X T-Shirt", defaultStock: 15, group: "clothing" },
             { name: "Rory X Phone Case", defaultStock: 20, group: "accessories" },
             { name: "Rory X Pin Badge", defaultStock: 40, group: "accessories" },
             { name: "Air Freshener", defaultStock: 30, group: "accessories" },
             { name: "Face Mask", defaultStock: 25, group: "accessories" },
-
-            // --- CLOTHING & ACCESSORIES PAGE 2 ---
             { name: "Rory X Unisex Joggers (Black)", defaultStock: 12, group: "clothing" },
             { name: "Rory X Unisex Joggers (White)", defaultStock: 12, group: "clothing" },
             { name: "Rory X Socks (Black)", defaultStock: 50, group: "clothing" },
@@ -161,13 +155,10 @@
             { name: "Rory X Shower Curtain", defaultStock: 5, group: "accessories" },
             { name: "Rory X 10oz glass", defaultStock: 30, group: "accessories" },
             { name: "Rory X Mug (3 Designs)", defaultStock: 24, group: "accessories" },
-
-            // --- CLOTHING & ACCESSORIES PAGE 3 ---
             { name: "Rory X Hoodie", defaultStock: 25, group: "clothing" },
             { name: "Rory X Jewelry Box", defaultStock: 15, group: "accessories" }
         ];
 
-        // Authentication Controller Logic
         function checkLogin() {
             const emailInput = document.getElementById('adminEmail').value.trim();
             const passwordInput = document.getElementById('adminPassword').value;
@@ -185,7 +176,6 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 
-                // Construct fields visually without parsing early calls
                 renderLiveStockGrid();
                 loadOrders();
                 setInterval(loadOrders, 5000);
@@ -196,7 +186,6 @@
             }
         }
 
-        // Render input structures statically
         function renderLiveStockGrid() {
             const shopTarget = document.getElementById('mainShopItems');
             const clothingTarget = document.getElementById('clothingItems');
@@ -219,11 +208,9 @@
                 else if (item.group === 'accessories') accTarget.appendChild(row);
             });
 
-            // Map values once inputs exist
             fetchLiveStockValues();
         }
 
-        // Fetch current records from Upstash database
         async function fetchLiveStockValues() {
             try {
                 const response = await fetch('/api/get-stock');
@@ -242,10 +229,9 @@
             }
         }
 
-        // Explicit submit event interception mapping
+        // Fixed submit handler: saves smoothly to Upstash and handles message displays
         document.getElementById('inventoryForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            e.stopPropagation(); // Stops accidental bubble triggering
             
             let updateMap = {};
             catalogBlueprint.forEach(item => {
@@ -268,11 +254,10 @@
                     setTimeout(() => { toast.style.display = 'none'; }, 3000);
                 }
             } catch (err) {
-                console.log("Silent catch: Blocked submit alert window.");
+                console.log("Database save failure catching.");
             }
         });
 
-        // Mass baseline reset update handler
         async function resetStockDefaults() {
             if (confirm("Restore original catalog factory defaults? Current database records will be overwritten.")) {
                 let defaultMap = {};
@@ -289,12 +274,11 @@
                         body: JSON.stringify(defaultMap)
                     });
                 } catch (err) {
-                    console.log("Silent catch: Default initialization error.");
+                    console.log("Reset defaults execution catching.");
                 }
             }
         }
 
-        // Order tracing logs fetching loop
         async function loadOrders() {
             try {
                 const response = await fetch('/api/get-orders');
@@ -322,18 +306,17 @@
                     `;
                 });
             } catch (err) {
-                console.log("Silent catch: Orders background loop fault.");
+                console.log("Orders ledger matching background fault.");
             }
         }
 
-        // Flush database tracking arrays entirely
         async function handleClearLogs() {
             if (confirm('Clear all historical logs directly from the server database? This action is permanent.')) {
                 try {
                     await fetch('/api/clear-orders', { method: 'POST' });
                     loadOrders();
                 } catch (err) {
-                    console.log("Silent catch: Clear endpoint error.");
+                    console.log("Logs reset verification catch.");
                 }
             }
         }
