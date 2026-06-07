@@ -229,7 +229,6 @@
             }
         }
 
-        // Fixed submit handler: saves smoothly to Upstash and handles message displays
         document.getElementById('inventoryForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -252,9 +251,12 @@
                     const toast = document.getElementById('saveToast');
                     toast.style.display = 'block';
                     setTimeout(() => { toast.style.display = 'none'; }, 3000);
+                } else {
+                    const resData = await response.json().catch(() => ({}));
+                    alert("Server rejected your save. Status: " + response.status + " - " + (resData.error || 'Unknown error'));
                 }
             } catch (err) {
-                console.log("Database save failure catching.");
+                alert("Network connection error: " + err.message);
             }
         });
 
@@ -268,13 +270,18 @@
                 });
 
                 try {
-                    await fetch('/api/update-stock', {
+                    const response = await fetch('/api/update-stock', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(defaultMap)
                     });
+                    if (response.ok) {
+                        alert("Defaults restored successfully!");
+                    } else {
+                        alert("Failed to save defaults. Server returned status: " + response.status);
+                    }
                 } catch (err) {
-                    console.log("Reset defaults execution catching.");
+                    alert("Error connection: " + err.message);
                 }
             }
         }
@@ -306,7 +313,7 @@
                     `;
                 });
             } catch (err) {
-                console.log("Orders ledger matching background fault.");
+                console.log("Orders log bypass.");
             }
         }
 
@@ -316,7 +323,7 @@
                     await fetch('/api/clear-orders', { method: 'POST' });
                     loadOrders();
                 } catch (err) {
-                    console.log("Logs reset verification catch.");
+                    console.log("Clear log bypass.");
                 }
             }
         }
