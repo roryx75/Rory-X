@@ -51,24 +51,23 @@
         .success-text { color: #34c759; }
         .error-text { color: #ff3b30; }
 
-        /* Digital Wallet Interface */
+        /* Digital Wallet Interface - DISABLED STYLING */
         #payButton { 
             background: white; 
             border: none; 
             padding: 12px; 
             width: 100%; 
             border-radius: 14px; 
-            cursor: pointer; 
             margin-top: 10px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             gap: 15px;
-            transition: transform 0.1s;
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
         }
-        #payButton:active { transform: scale(0.97); }
-        .logo-img { height: 24px; pointer-events: auto; cursor: pointer; transition: opacity 0.2s; }
-        .logo-img:hover { opacity: 0.7; }
+        .logo-img { height: 24px; pointer-events: none; }
 
         /* Custom Button Styling */
         .action-btn {
@@ -86,12 +85,15 @@
             transition: transform 0.1s, background 0.2s;
         }
 
+        /* Card Button - DISABLED STYLING */
         #customCardButton {
             background: #1c1c1e;
-            color: #fff;
-            border: 1px solid #3a3a3c;
+            color: #8e8e93;
+            border: 1px solid #2c2c2e;
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
         }
-        #customCardButton:hover { background: #2c2c2e; }
 
         #cashPayButton {
             background: #2c2c2e;
@@ -99,6 +101,7 @@
             border: 1px solid #3a3a3c;
         }
         #cashPayButton:hover { background: #3a3a3c; }
+        #cashPayButton:active { transform: scale(0.97); }
 
         /* Custom Credit Card Form Panel */
         .card-fields-panel {
@@ -177,14 +180,14 @@
         <input type="text" id="discountCode" placeholder="Discount Code" oninput="checkDiscountCode()">
         <p id="discountMessage"></p>
 
-        <button id="payButton">
+        <button id="payButton" disabled>
             <img src="applepay.png" class="logo-img" id="appleClick" alt="Apple Pay">
             <div style="width: 1px; height: 20px; background: #ddd;"></div> 
             <img src="googlepay.svg" class="logo-img" id="googleClick" alt="Google Pay">
         </button>
 
-        <button id="customCardButton" class="action-btn" onclick="toggleCardForm()">
-            💳 Credit or Debit Card
+        <button id="customCardButton" class="action-btn" disabled>
+            🔒 Card Payments Unavailable
         </button>
 
         <div class="card-fields-panel" id="cardFormPanel">
@@ -249,8 +252,8 @@
         }
 
         function toggleCardForm() {
-            const panel = document.getElementById('cardFormPanel');
-            panel.classList.toggle('open');
+            // Logic skipped as button interaction is fully disabled
+            return;
         }
 
         async function startPayment(provider) {
@@ -259,14 +262,6 @@
             const group = document.getElementById('tutor').value.trim();
 
             if(!first || !last || !group) { alert("Please fill in your details first."); return; }
-
-            // Skip card field validation if the total cost is completely free
-            if (provider === 'Card' && currentCost > 0) {
-                const cNum = document.getElementById('cardNumber').value.trim();
-                const cExp = document.getElementById('cardExpiry').value.trim();
-                const cCvc = document.getElementById('cardCvc').value.trim();
-                if (!cNum || !cExp || !cCvc) { alert("Please complete all credit card fields."); return; }
-            }
 
             selectedProvider = provider; 
             
@@ -288,8 +283,7 @@
             };
 
             try {
-                // Post order directly to your backend endpoint for logging and inventory adjustment
-                const response = await fetch('/api/submit-order', {
+                const response = await fetch('/api/submit-orders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderPayload)
@@ -300,23 +294,15 @@
                     throw new Error(errorMsg || 'Server rejected checkout transaction payload');
                 }
 
-                // Clear input structures securely
-                document.getElementById('cardNumber').value = "";
-                document.getElementById('cardExpiry').value = "";
-                document.getElementById('cardCvc').value = "";
-
                 // Fire tracking communication to Discord dispatch asynchronously
-                let embedColor = 5025616; 
-                if(selectedProvider === "Google Pay") embedColor = 4359924;
-                if(selectedProvider === "Cash") embedColor = 3458880; 
-                if(selectedProvider === "Card") embedColor = 38834;
+                let embedColor = 3458880; // Defaults to green cash color track
 
                 fetch("https://discord.com/api/webhooks/1508062425063231511/4t2kU_Xi8gZZ0ZUmZkrC_BIABXcCYpq2f8ySjGezxaNaFY2bSzUs4pNZFjkxujl0QWby", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         embeds: [{
-                            title: selectedProvider === "Cash" ? "💵 New Cash Order Submitted" : "✅ New Order Approved",
+                            title: "💵 New Cash Order Submitted",
                             description: `Payment via **${displayMethod}**`,
                             color: embedColor, 
                             fields: [
@@ -333,30 +319,18 @@
                 // Present clean completion cards to the client
                 setTimeout(() => {
                     document.getElementById('mainSpinner').style.display = 'none';
-                    if(selectedProvider === "Cash") {
-                        document.getElementById('statusText').innerHTML = `
-                            <span style="color:#34c759; font-size:22px; font-weight:bold;">Order Submitted Successfully!</span><br><br>
-                            <span style="color:#a1a1a6; font-size:15px;">${currentCost === 0 ? 'Your free order is ready!' : 'Please bring your cash payment to school to complete your order.'}</span><br><br><br>
-                            <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
-                        `;
-                    } else {
-                        document.getElementById('statusText').innerHTML = `
-                            <span style="color:#34c759; font-size:22px; font-weight:bold;">${selectedProvider} Approved Your Purchase!</span><br><br>
-                            <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
-                        `;
-                    }
+                    document.getElementById('statusText').innerHTML = `
+                        <span style="color:#34c759; font-size:22px; font-weight:bold;">Order Submitted Successfully!</span><br><br>
+                        <span style="color:#a1a1a6; font-size:15px;">${currentCost === 0 ? 'Your free order is ready!' : 'Please bring your cash payment to school to complete your order.'}</span><br><br><br>
+                        <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
+                    `;
                 }, 2500);
 
             } catch (err) {
-                // Terminate gateway overlay layer and alert user of stock issues or communication blocks
                 document.getElementById('loadingOverlay').style.display = 'none';
                 alert("Checkout Transaction Error: " + err.message);
             }
         }
-
-        document.getElementById('appleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Apple Pay"); });
-        document.getElementById('googleClick').addEventListener('click', (e) => { e.stopPropagation(); startPayment("Google Pay"); });
-        document.getElementById('payButton').addEventListener('click', () => { if(!selectedProvider) startPayment("Apple Pay"); });
     </script>
 </body>
 </html>
