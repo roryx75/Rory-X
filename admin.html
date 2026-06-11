@@ -6,7 +6,7 @@
     <title>Admin Portal | Rory X</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: white; font-family: -apple-system, sans-serif; padding: 40px; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; min-height: 100vh; display: flex; flex-direction: column; }
         
         /* Login Screen Interface Container */
         #loginScreen {
@@ -79,8 +79,8 @@
         <h2>Admin Portal Login</h2>
         <input type="email" id="adminEmail" placeholder="Enter Admin Email" onkeydown="if(event.key === 'Enter') checkLogin()">
         <input type="password" id="adminPassword" placeholder="Enter Admin Password" onkeydown="if(event.key === 'Enter') checkLogin()">
-        <p id="errorMessage">Incorrect Username or Password. Contact Roryxmedia@hotmail.com</p>
-        <button onclick="checkLogin()"Login"</button>
+        <p id="errorMessage">Incorrect Email or Password. Contact Roryxmedia@hotmail.com</p>
+        <button onclick="checkLogin()">Login</button>
     </div>
 
     <div id="adminPanel">
@@ -143,7 +143,7 @@
             { name: "Rory X Hat", defaultStock: 12, group: "clothing" },
             { name: "Rory X T-Shirt", defaultStock: 15, group: "clothing" },
             { name: "Rory X Phone Case", defaultStock: 20, group: "accessories" },
-            { name: "Rory X Medium Ring", defaultStock: 15, group: "accessories" }, // ADDED: Item added with numeric default value
+            { name: "Rory X Medium Ring", defaultStock: 15, group: "accessories" },
             { name: "Rory X Pin Badge", defaultStock: 40, group: "accessories" },
             { name: "Air Freshener", defaultStock: 30, group: "accessories" },
             { name: "Face Mask", defaultStock: 25, group: "accessories" },
@@ -214,7 +214,6 @@
 
         async function fetchLiveStockValues() {
             try {
-                // FIXED: Appended query string parameter timestamp to clear Vercel network cache logic
                 const response = await fetch('/api/get-stock?t=' + Date.now());
                 if (!response.ok) return;
                 
@@ -290,7 +289,6 @@
 
         async function loadOrders() {
             try {
-                // FIXED: Appended query string parameter timestamp to clear Vercel network cache logic
                 const response = await fetch('/api/get-orders?t=' + Date.now());
                 if (!response.ok) return;
                 const data = await response.json();
