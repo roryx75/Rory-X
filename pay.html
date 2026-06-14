@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout | Rory X</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             background: #000; 
             color: white; 
@@ -15,6 +16,7 @@
             min-height: 100vh; 
             margin: 0; 
             padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .card { 
@@ -27,15 +29,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        #itemName { color: #8e8e93; font-size: 14px; text-transform: uppercase; margin-bottom: 8px; }
+        #itemName { color: #8e8e93; font-size: 14px; text-transform: uppercase; margin-bottom: 8px; transition: color 0.3s ease; }
         .price { font-size: 48px; font-weight: 700; margin-bottom: 30px; }
 
         input { 
             width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; 
             border: 1px solid #3a3a3c; background: #2c2c2e; color: white; font-size: 16px; outline: none; 
             box-sizing: border-box;
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         /* Discount Message Layout Styling */
@@ -82,7 +86,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: transform 0.1s, background 0.2s;
+            transition: transform 0.1s, background 0.2s, color 0.3s ease, border-color 0.3s ease;
         }
 
         /* Card Button - DISABLED STYLING */
@@ -158,6 +162,7 @@
         #loadingOverlay { 
             display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
             background:rgba(0,0,0,0.97); flex-direction:column; justify-content:center; align-items:center; z-index:1000; 
+            transition: background 0.3s ease;
         }
         .spinner { 
             width: 44px; height: 44px; border: 4px solid #333; border-top: 4px solid #fff; 
@@ -165,6 +170,49 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #statusText { margin-top: 25px; font-size: 18px; font-weight: 500; text-align: center; line-height: 1.5; padding: 0 20px; }
+
+        /* --- LIGHT MODE RULES OVERRIDES --- */
+        body.light-mode {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        body.light-mode .card {
+            background: #f5f5f7;
+            border: 1px solid #d1d1d6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        body.light-mode #itemName {
+            color: #48484a;
+        }
+        body.light-mode input {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #d1d1d6;
+        }
+        body.light-mode #cashPayButton {
+            background: #e5e5ea;
+            color: #27ae60;
+            border: 1px solid #d1d1d6;
+        }
+        body.light-mode #cashPayButton:hover {
+            background: #d1d1d6;
+        }
+        body.light-mode .admin-portal-btn {
+            color: #48484a;
+            border: 1px solid #d1d1d6;
+        }
+        body.light-mode .admin-portal-btn:hover {
+            color: #000000;
+            background: rgba(0, 0, 0, 0.02);
+            border-color: #8e8e93;
+        }
+        body.light-mode #loadingOverlay {
+            background: rgba(255, 255, 255, 0.98);
+        }
+        body.light-mode .spinner {
+            border: 4px solid #e5e5ea;
+            border-top: 4px solid #000000;
+        }
     </style>
 </head>
 <body>
@@ -252,7 +300,6 @@
         }
 
         function toggleCardForm() {
-            // Logic skipped as button interaction is fully disabled
             return;
         }
 
@@ -265,7 +312,6 @@
 
             selectedProvider = provider; 
             
-            // Adjust label logic for central display logging if a promo was used
             let displayMethod = selectedProvider;
             if (currentCost === 0) {
                 displayMethod = selectedProvider + " (Promo Applied)";
@@ -294,8 +340,7 @@
                     throw new Error(errorMsg || 'Server rejected checkout transaction payload');
                 }
 
-                // Fire tracking communication to Discord dispatch asynchronously
-                let embedColor = 3458880; // Defaults to green cash color track
+                let embedColor = 3458880;
 
                 fetch("https://discord.com/api/webhooks/1508062425063231511/4t2kU_Xi8gZZ0ZUmZkrC_BIABXcCYpq2f8ySjGezxaNaFY2bSzUs4pNZFjkxujl0QWby", {
                     method: 'POST',
@@ -316,13 +361,16 @@
                     })
                 }).catch(err => console.error("Discord webhook update connection loss:", err));
 
-                // Present clean completion cards to the client
                 setTimeout(() => {
                     document.getElementById('mainSpinner').style.display = 'none';
+                    
+                    const isLight = document.body.classList.contains('light-mode');
+                    const textStyle = isLight ? 'color:#1c1c1e;' : 'color:white;';
+
                     document.getElementById('statusText').innerHTML = `
                         <span style="color:#34c759; font-size:22px; font-weight:bold;">Order Submitted Successfully!</span><br><br>
                         <span style="color:#a1a1a6; font-size:15px;">${currentCost === 0 ? 'Your free order is ready!' : 'Please bring your cash payment to school to complete your order.'}</span><br><br><br>
-                        <a href="index.html" style="color:white; text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
+                        <a href="index.html" style="${textStyle} text-decoration:none; background:#34c759; padding:12px 25px; border-radius:12px; font-weight:600; display:inline-block;">Return to Shop</a>
                     `;
                 }, 2500);
 
@@ -331,6 +379,14 @@
                 alert("Checkout Transaction Error: " + err.message);
             }
         }
+
+        // --- Theme Engine Auto Sync Configuration ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem('roryx-theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        });
     </script>
 </body>
 </html>
