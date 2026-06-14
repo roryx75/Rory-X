@@ -256,7 +256,7 @@
 </head>
 <body>
     <nav>
-        <img src="RoryX.png" alt="Rory X" class="nav-logo">
+        <img src="RoryX.png" alt="Rory X" class="nav-logo" id="navLogo">
         <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="shop.html">Shop</a></li>
@@ -354,28 +354,31 @@
     </style>
 
     <script>
-        // Runtime handler to manage theme shifts dynamically
         function toggleDisplayTheme() {
             const body = document.body;
             const btn = document.getElementById('themeBtn');
+            const logo = document.getElementById('navLogo');
             
             body.classList.toggle('light-mode');
             
             if(body.classList.contains('light-mode')) {
                 btn.innerHTML = "🌙 Dark Mode";
+                logo.src = "roryxlite.png"; // FIXED: Logo swap logic on active toggle trigger
                 localStorage.setItem('roryx-theme', 'light');
             } else {
                 btn.innerHTML = "☀️ Light Mode";
+                logo.src = "roryx.png"; // FIXED: Restore dark asset
                 localStorage.setItem('roryx-theme', 'dark');
             }
         }
 
-        // Maintain persistent choice across navigations
+        // Maintain state persistence cleanly
         window.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('roryx-theme');
             if(savedTheme === 'light') {
                 document.body.classList.add('light-mode');
                 document.getElementById('themeBtn').innerHTML = "🌙 Dark Mode";
+                document.getElementById('navLogo').src = "roryxlite.png"; // FIXED: State initialization load tracker
             }
         });
     </script>
