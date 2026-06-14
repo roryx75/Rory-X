@@ -92,6 +92,11 @@
             background: #34c759;
             color: white;
         }
+        /* Adaptive dark contrast for sold out buttons when layout is light */
+        body.light-mode .buy-now-btn.disabled {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
 
         nav { 
             position: fixed; top: 0; width: 100%; height: 110px; 
@@ -130,7 +135,15 @@
             font-size: 17px; transition: 0.3s; align-self: center; width: 100%; text-align: center; display: inline-block;
         }
         .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
-        .buy-now-btn.disabled { background-color: #222 !important; color: #555 !important; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        
+        /* White button layout with clear type contrast for dark backdrop environments */
+        .buy-now-btn.disabled { 
+            background-color: #ffffff !important; 
+            color: #1c1c1e !important; 
+            cursor: not-allowed; 
+            transform: none !important; 
+            box-shadow: none !important; 
+        }
 
         .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 60px; align-items: center; width: 100%; }
         .page-link { background: rgba(255,255,255,0.08); color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: background 0.3s ease, color 0.3s ease; }
