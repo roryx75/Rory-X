@@ -75,6 +75,11 @@
             color: #000000;
             border: 1px solid #d1d1d6;
         }
+        /* Adaptive dark contrast for sold out buttons when layout is light */
+        body.light-mode .buy-btn.disabled {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
 
         /* The Professional Header Layout */
         nav {
@@ -179,7 +184,13 @@
             transition: background 0.2s;
         }
         .buy-btn:hover { background: #27ae60; }
-        .buy-btn.disabled { background-color: #2c2c2e !important; color: #555 !important; cursor: not-allowed; }
+        
+        /* White button layout with clear type contrast for dark backdrop environments */
+        .buy-btn.disabled { 
+            background-color: #ffffff !important; 
+            color: #1c1c1e !important; 
+            cursor: not-allowed; 
+        }
     </style>
 </head>
 <body>
