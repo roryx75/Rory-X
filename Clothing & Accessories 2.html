@@ -8,20 +8,91 @@
     <style>
         /* Mobile Fix */
         @media (max-width: 768px) {
-            nav { padding: 0 20px; height: 80px; }
+            nav { padding: 15px 20px; height: auto; display: flex !important; flex-direction: column; gap: 10px; }
             .nav-logo { height: 60px; }
-            nav ul { gap: 15px; }
+            nav ul { gap: 15px; justify-content: center; }
             nav a { font-size: 12px; }
             .nav-spacer { display: none; }
-            .page-wrapper { margin-top: 120px; width: 90%; }
+            .page-wrapper { margin-top: 180px; width: 90%; }
             .product-grid { grid-template-columns: 1fr; gap: 20px; }
             .product-card { padding: 40px 20px; border-radius: 30px; }
             .product-card img, .slider-container { height: 200px; }
+            .nav-right-container { margin-top: 5px; justify-content: center; }
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
         body { background-color: #000; color: #f5f5f7; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: background-color 0.3s ease, color 0.3s ease; }
         
+        /* Dropdown & Controls Containers */
+        .nav-right-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Stock Button matching Page 1 engine rules */
+        .stock-btn {
+            background: rgba(52, 199, 89, 0.15);
+            color: #34c759;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stock-btn:hover {
+            background: rgba(52, 199, 89, 0.25);
+            transform: scale(1.03);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 12px);
+            background: #1c1c1e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            width: 180px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            z-index: 10000;
+            overflow: hidden;
+            animation: menuFadeIn 0.2s ease forwards;
+        }
+        @keyframes menuFadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-menu.active { display: block; }
+
+        .dropdown-menu a {
+            display: block;
+            color: #f5f5f7;
+            padding: 12px 16px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            opacity: 0.9;
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            opacity: 1;
+        }
+
         /* Theme Toggle Button Style */
         .theme-toggle-btn {
             background: rgba(255, 255, 255, 0.1);
@@ -58,6 +129,19 @@
         body.light-mode nav a:hover {
             opacity: 1;
         }
+        body.light-mode .stock-btn {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            border: 1px solid rgba(39, 174, 96, 0.25);
+        }
+        body.light-mode .stock-btn:hover { background: rgba(39, 174, 96, 0.18); }
+        body.light-mode .dropdown-menu {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        body.light-mode .dropdown-menu a { color: #000000; }
+        body.light-mode .dropdown-menu a:hover { background: rgba(0, 0, 0, 0.04); }
         body.light-mode .theme-toggle-btn {
             background: rgba(0, 0, 0, 0.05);
             color: #000000;
@@ -92,21 +176,21 @@
             background: #34c759;
             color: white;
         }
-        /* Adaptive dark contrast for sold out buttons when layout is light */
         body.light-mode .buy-now-btn.disabled {
             background-color: #000000 !important;
             color: #ffffff !important;
         }
 
+        /* Centered 3-Column Grid Navigation */
         nav { 
             position: fixed; top: 0; width: 100%; height: 110px; 
             background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 9999; 
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 40px; z-index: 9999; 
             border-bottom: 0.5px solid rgba(255, 255, 255, 0.08); 
             transition: background 0.3s ease, border-bottom 0.3s ease;
         }
-        .nav-logo { height: 100px; width: auto; }
-        nav ul { display: flex; list-style: none; gap: 40px; align-items: center; }
+        .nav-logo { height: 100px; width: auto; justify-self: start; }
+        nav ul { display: flex; list-style: none; gap: 40px; align-items: center; justify-self: center; }
         nav a { text-decoration: none; color: #f5f5f7; font-size: 14px; opacity: 0.7; transition: 0.3s; }
         nav a:hover { opacity: 1; }
 
@@ -136,7 +220,6 @@
         }
         .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
         
-        /* Updated: White button with clean text contrast for Sold Out state */
         .buy-now-btn.disabled { 
             background-color: #ffffff !important; 
             color: #1c1c1e !important; 
@@ -172,10 +255,18 @@
             <li><a href="shop.html">Shop</a></li>
             <li><a href="Clothing & Accessories.html">Clothing & Accessories</a></li>
             <li><a href="about.html">About Us</a></li>
-            <li><a href="admin.html" style="color: #34c759; font-weight: 600; opacity: 0.9;">Admin Dashboard</a></li>
-            <li><button class="theme-toggle-btn" onclick="toggleDisplayTheme()" id="themeBtn">☀️ Light Mode</button></li>
         </ul>
-        <div style="width: 50px;"></div>
+        
+        <div class="nav-right-container">
+            <div class="dropdown">
+                <button class="stock-btn" id="stockBtn" onclick="toggleStockMenu(event)">📈 Live Stock</button>
+                <div class="dropdown-menu" id="stockDropdown">
+                    <a href="admin.html">View Public Stock</a>
+                    <a href="privatestock.html" style="border-top: 1px solid rgba(255,255,255,0.06);">View Private Stock</a>
+                </div>
+            </div>
+            <button class="theme-toggle-btn" onclick="toggleDisplayTheme()" id="themeBtn">☀️ Light Mode</button>
+        </div>
     </nav>
     
     <div class="page-wrapper">
@@ -252,7 +343,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Socks (White)" data-base-url="pay.html?item=Rory%20X%20Socks%20(White)&price=5.00">
+            <div class="product-card" data-product-name="Rory X Medium Ring" data-base-url="pay.html?item=Rory%20X%20Medium%20Ring&price=3.00">
                 <div>
                     <img src="ring.png" alt="Rory X Medium Ring">
                     <h3>Rory X Medium Ring</h3>
@@ -339,6 +430,20 @@
     </footer>
 
     <script>
+        // --- Navigation Dropdown Control ---
+        function toggleStockMenu(event) {
+            event.stopPropagation();
+            document.getElementById('stockDropdown').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('stockDropdown');
+            const button = document.getElementById('stockBtn');
+            if (dropdown && !button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
         // --- Image Slider Logic ---
         let currentIndex = 0;
         const totalSlides = 3;
@@ -368,7 +473,7 @@
 
         startAutoSlide();
 
-        // --- Live Vercel KV Database Tracker Sync ---
+        // --- Live Tracker Sync Engine ---
         async function fetchLiveStock() {
             try {
                 const response = await fetch('/api/get-stock?t=' + Date.now());
@@ -425,18 +530,22 @@
                 localStorage.setItem('roryx-theme', 'light');
             } else {
                 btn.innerHTML = "☀️ Light Mode";
-                logo.src = "roryx.png";
+                logo.src = "RoryX.png";
                 localStorage.setItem('roryx-theme', 'dark');
             }
         }
 
-        // Initialize engine and poll database every 5 seconds
+        // Initialize persistent user preferences
         document.addEventListener("DOMContentLoaded", () => {
             const savedTheme = localStorage.getItem('roryx-theme');
             if(savedTheme === 'light') {
                 document.body.classList.add('light-mode');
                 document.getElementById('themeBtn').innerHTML = "🌙 Dark Mode";
                 document.getElementById('navLogo').src = "roryxlite.png";
+            } else {
+                document.body.classList.remove('light-mode');
+                document.getElementById('themeBtn').innerHTML = "☀️ Light Mode";
+                document.getElementById('navLogo').src = "RoryX.png";
             }
 
             fetchLiveStock();
