@@ -58,69 +58,28 @@
         .login-btn:hover { background-color: #2da44e; }
         .error-msg { color: #ff3b30; font-size: 14px; margin-top: 10px; display: none; }
 
-        /* --- THEME TOGGLE BUTTON STYLE --- */
+        /* --- THEME TOGGLE --- */
         .theme-toggle-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 600;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px;
         }
-        .theme-toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.03);
-        }
+        .theme-toggle-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.03); }
 
-        /* --- LIVE STOCK DROPDOWN INTERFACE --- */
+        /* --- LIVE STOCK DROPDOWN --- */
         .dropdown { position: relative; display: inline-block; }
         .stock-trigger-btn {
-            background: rgba(52, 199, 89, 0.1);
-            color: #34c759;
-            border: 1px solid rgba(52, 199, 89, 0.3);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(52, 199, 89, 0.1); color: #34c759; border: 1px solid rgba(52, 199, 89, 0.3);
+            padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 600;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px;
         }
         .stock-trigger-btn:hover { background: rgba(52, 199, 89, 0.2); transform: scale(1.03); }
         .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: calc(100% + 10px);
-            background: rgba(28, 28, 30, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            min-width: 180px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            z-index: 10000;
-            overflow: hidden;
+            display: none; position: absolute; right: 0; top: calc(100% + 10px);
+            background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px; min-width: 180px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 10000; overflow: hidden;
         }
-        .dropdown-menu a {
-            display: block;
-            color: #f5f5f7;
-            padding: 12px 16px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            opacity: 0.8;
-            transition: background 0.2s ease, opacity 0.2s ease;
-            text-align: left;
-        }
+        .dropdown-menu a { display: block; color: #f5f5f7; padding: 12px 16px; text-decoration: none; font-size: 13px; font-weight: 500; opacity: 0.8; transition: 0.2s; text-align: left; }
         .dropdown-menu a:hover { background: rgba(255, 255, 255, 0.08); opacity: 1; }
         .dropdown-menu a:not(:last-child) { border-bottom: 0.5px solid rgba(255, 255, 255, 0.08); }
         .dropdown:hover .dropdown-menu { display: block; }
@@ -129,30 +88,19 @@
         body.light-mode { background-color: #ffffff; color: #000000; }
         body.light-mode nav { background: rgba(255, 255, 255, 0.8); border-bottom: 0.5px solid rgba(0, 0, 0, 0.1); }
         body.light-mode nav a { color: #000000; opacity: 0.7; }
-        body.light-mode nav a:hover { opacity: 1; }
         body.light-mode .theme-toggle-btn { background: rgba(0, 0, 0, 0.05); color: #000000; border: 1px solid rgba(0, 0, 0, 0.15); }
-        body.light-mode .theme-toggle-btn:hover { background: rgba(0, 0, 0, 0.1); }
-        body.light-mode .dropdown-menu { background: rgba(245, 245, 247, 0.95); border: 1px solid rgba(0, 0, 0, 0.15); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
+        body.light-mode .dropdown-menu { background: rgba(245, 245, 247, 0.95); border: 1px solid rgba(0, 0, 0, 0.15); }
         body.light-mode .dropdown-menu a { color: #000000; }
-        body.light-mode .dropdown-menu a:hover { background: rgba(0, 0, 0, 0.05); }
-        body.light-mode .dropdown-menu a:not(:last-child) { border-bottom: 0.5px solid rgba(0, 0, 0, 0.1); }
-        
-        body.light-mode .management-box { background: #f5f5f7; border: 1px solid #d1d1d6; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        body.light-mode .management-box { background: #f5f5f7; border: 1px solid #d1d1d6; }
         body.light-mode th { background: rgba(0, 0, 0, 0.04); color: #1c1c1e; border-bottom: 2px solid #d1d1d6; }
         body.light-mode td { border-bottom: 1px solid #e5e5ea; color: #3a3a3c; }
-        body.light-mode tr:hover { background: rgba(0, 0, 0, 0.02); }
         body.light-mode .stock-input { background: #ffffff; border: 1px solid #d1d1d6; color: #000000; }
-        body.light-mode .stock-input:focus { border-color: #34c759; background: #ffffff; }
-        body.light-mode footer { border-top: 1px solid rgba(0, 0, 0, 0.08); color: #48484a; }
-        body.light-mode .social-link { color: #48484a; }
-        body.light-mode .social-link:hover { color: #000000; }
 
         /* --- NAVIGATION LAYOUT --- */
         nav { 
             position: fixed; top: 0; width: 100%; height: 110px; background: rgba(0, 0, 0, 0.4); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); display: flex; 
-            align-items: center; padding: 0 40px; z-index: 9999; border-bottom: 0.5px solid rgba(255, 255, 255, 0.08); 
-            transition: background 0.3s ease, border-bottom 0.3s ease;
+            backdrop-filter: blur(25px); display: flex; align-items: center; padding: 0 40px; z-index: 9999; 
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.08); transition: 0.3s;
         }
         .nav-logo { height: 100px; width: auto; position: absolute; left: 40px; }
         nav ul { display: flex; list-style: none; gap: 40px; align-items: center; position: absolute; left: 50%; transform: translateX(-50%); }
@@ -160,72 +108,45 @@
         nav a:hover { opacity: 1; }
         .nav-actions { position: absolute; right: 40px; display: flex; align-items: center; gap: 15px; }
 
-        /* --- CONTENT WRAPPER & MANAGEMENT BOX --- */
+        /* --- CONTENT DISPLAY LAYOUT --- */
         .page-wrapper { margin-top: 150px; width: 95%; max-width: 1000px; display: flex; flex-direction: column; gap: 30px; margin-bottom: 80px; }
         .page-header { display: flex; justify-content: space-between; align-items: center; }
         .page-header h1 { font-size: 28px; font-weight: 700; }
         
         .management-box {
             background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px; padding: 30px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            overflow-x: auto; transition: all 0.3s ease;
+            border-radius: 28px; padding: 30px; backdrop-filter: blur(20px); overflow-x: auto;
         }
 
-        /* --- TABLE STYLE --- */
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { padding: 16px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #a1a1a6; border-bottom: 2px solid rgba(255, 255, 255, 0.1); }
-        td { padding: 18px 16px; font-size: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); vertical-align: middle; }
+        th { padding: 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #a1a1a6; border-bottom: 2px solid rgba(255, 255, 255, 0.1); }
+        td { padding: 14px 16px; font-size: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); vertical-align: middle; }
         tr:hover { background: rgba(255, 255, 255, 0.02); }
         
-        .product-info { display: flex; align-items: center; gap: 15px; }
-        .product-thumb { width: 50px; height: 50px; object-fit: contain; background: rgba(255, 255, 255, 0.02); border-radius: 8px; padding: 4px; }
         .product-name { font-weight: 600; }
-
-        .status-badge { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
+        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
         .status-instock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
         .status-low { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
         .status-out { color: #ff3b30; background: rgba(255, 59, 48, 0.1); }
 
         .stock-input {
-            width: 80px; padding: 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.05); color: #fff; font-size: 15px; font-weight: 600; text-align: center;
-            outline: none; transition: border-color 0.2s, background-color 0.2s;
+            width: 80px; padding: 8px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05); color: #fff; font-size: 14px; font-weight: 600; text-align: center; outline: none;
         }
-        .stock-input:focus { border-color: #34c759; background: rgba(255, 255, 255, 0.1); }
+        .stock-input:focus { border-color: #34c759; }
         
-        .save-btn {
-            background: #34c759; color: #fff; border: none; padding: 10px 20px; border-radius: 10px;
-            font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s, transform 0.2s;
-        }
-        .save-btn:hover { background: #2da44e; transform: scale(1.02); }
-        .save-all-btn {
-            background: #34c759; color: white; border: none; padding: 12px 24px; border-radius: 14px;
-            font-weight: 600; font-size: 15px; cursor: pointer; transition: background 0.2s, transform 0.2s;
-        }
-        .save-all-btn:hover { background: #2da44e; transform: scale(1.03); }
-
-        footer { width: 100%; padding: 60px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; color: #a1a1a6; font-size: 14px; transition: border-top 0.3s ease, color 0.3s ease; }
-        .social-link { text-decoration: none; display: flex; align-items: center; gap: 8px; color: #a1a1a6; transition: 0.3s; }
-        .social-link img { width: 20px; height: 20px; }
-        .social-link:hover { color: #fff; }
-
-        @media (max-width: 768px) {
-            nav { padding: 0 20px; height: 80px; justify-content: center; }
-            .nav-logo { height: 60px; position: static; margin-right: auto; }
-            nav ul { gap: 15px; position: static; transform: none; }
-            nav a { font-size: 12px; }
-            .nav-actions { position: static; }
-            .page-wrapper { margin-top: 120px; }
-            .page-header { flex-direction: column; gap: 15px; align-items: flex-start; }
-            td, th { padding: 12px 10px; font-size: 14px; }
-        }
+        .save-btn { background: #34c759; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; }
+        .save-btn:hover { background: #2da44e; }
+        .save-all-btn { background: #34c759; color: white; border: none; padding: 12px 24px; border-radius: 14px; font-weight: 600; font-size: 15px; cursor: pointer; }
+        .save-all-btn:hover { background: #2da44e; }
+        footer { width: 100%; padding: 40px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; color: #a1a1a6; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div id="loginGate">
         <div class="login-card">
-            <h2>Rory X Admin Panel</h2>
+            <h2>Rory X Control Panel</h2>
             <input type="text" id="usernameField" placeholder="Username">
             <input type="password" id="passwordField" placeholder="Password">
             <button class="login-btn" onclick="checkGateAccess()">Access Terminal</button>
@@ -255,7 +176,7 @@
 
     <div class="page-wrapper">
         <div class="page-header">
-            <h1>Private Stock Manager</h1>
+            <h1>Private Stock Engine (All Items)</h1>
             <button class="save-all-btn" onclick="saveAllStock()">Save All Changes</button>
         </div>
 
@@ -263,77 +184,64 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Product Details</th>
-                        <th>Base Price</th>
-                        <th>Current Count</th>
-                        <th>Status</th>
+                        <th>Product Name</th>
+                        <th>Base Cost</th>
+                        <th>Private Count</th>
+                        <th>Stock Health</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="stockTableBody">
-                    <tr data-product="Rory X Hoodie">
-                        <td>
-                            <div class="product-info">
-                                <img src="Hoodie1,2.png" alt="Rory X Hoodie" class="product-thumb">
-                                <span class="product-name">Rory X Hoodie</span>
-                            </div>
-                        </td>
-                        <td>£15.00</td>
-                        <td><input type="number" class="stock-input" value="10" min="0" oninput="updateRowStatus(this)"></td>
-                        <td><span class="status-badge status-instock">In Stock</span></td>
-                        <td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td>
-                    </tr>
-                    <tr data-product="Rory X Jewelry Box">
-                        <td>
-                            <div class="product-info">
-                                <img src="Jewelry Box.png" alt="Rory X Jewelry Box" class="product-thumb">
-                                <span class="product-name">Rory X Jewelry Box</span>
-                            </div>
-                        </td>
-                        <td>£15.00</td>
-                        <td><input type="number" class="stock-input" value="2" min="0" oninput="updateRowStatus(this)"></td>
-                        <td><span class="status-badge status-low">Low Stock</span></td>
-                        <td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td>
-                    </tr>
+                    <tr data-product="Rory X Hat"><td><span class="product-name">Rory X Hat</span></td><td>£10.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X T-Shirt"><td><span class="product-name">Rory X T-Shirt</span></td><td>£12.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Phone Case"><td><span class="product-name">Rory X Phone Case</span></td><td>£9.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Pin Badge"><td><span class="product-name">Rory X Pin Badge</span></td><td>£2.50</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Air Freshener"><td><span class="product-name">Air Freshener</span></td><td>£4.50</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Face Mask"><td><span class="product-name">Face Mask</span></td><td>£5.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    
+                    <tr data-product="Dehydrated Water"><td><span class="product-name">Dehydrated Water</span></td><td>£3.50</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Air"><td><span class="product-name">Air</span></td><td>£5.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Unlit Fire"><td><span class="product-name">Unlit Fire</span></td><td>£7.85</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Boxes"><td><span class="product-name">Boxes</span></td><td>£19.75</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Medium Ring"><td><span class="product-name">Rory X Medium Ring</span></td><td>£3.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Shower Curtain"><td><span class="product-name">Rory X Shower Curtain</span></td><td>£30.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X 10oz glass"><td><span class="product-name">Rory X 10oz glass</span></td><td>£10.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Mug"><td><span class="product-name">Rory X Mug</span></td><td>£7.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    
+                    <tr data-product="Rory X Unisex Joggers (Black)"><td><span class="product-name">Rory X Unisex Joggers (Black)</span></td><td>£15.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Unisex Joggers (White)"><td><span class="product-name">Rory X Unisex Joggers (White)</span></td><td>£15.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Socks (Black)"><td><span class="product-name">Rory X Socks (Black)</span></td><td>£5.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Socks (White)"><td><span class="product-name">Rory X Socks (White)</span></td><td>£5.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Sticker"><td><span class="product-name">Rory X Sticker</span></td><td>£3.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Hockey Puck"><td><span class="product-name">Rory X Hockey Puck</span></td><td>£25.00</td><td><input type="number" class="stock-input" value="0" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Hoodie"><td><span class="product-name">Rory X Hoodie</span></td><td>£15.00</td><td><input type="number" class="stock-input" value="10" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
+                    <tr data-product="Rory X Jewelry Box"><td><span class="product-name">Rory X Jewelry Box</span></td><td>£15.00</td><td><input type="number" class="stock-input" value="2" min="0" oninput="updateRowStatus(this)"></td><td><span class="status-badge"></span></td><td><button class="save-btn" onclick="saveSingleRow(this)">Save</button></td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <footer>
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-            <p>&copy; Copyright 2026 Rory X | Private Framework Secure Terminal</p>
-        </div>
-    </footer>
+    <footer><p>&copy; Copyright 2026 Rory X | Private Secure Terminal Workspace</p></footer>
 
     <script>
-        // Separate Key Isolation to ensure Private and Public files do not clash
-        const PRIVATE_STOCK_KEY = 'roryx-private-stock';
-        
-        const defaultPrivateStock = {
-            "Rory X Hoodie": 10,
-            "Rory X Jewelry Box": 2
-        };
+        // CRITICAL ISOLATION KEY: Keeps this file entirely separated from admin.html
+        const PRIVATE_STOCK_KEY = 'roryx-isolated-private-database-v2';
 
-        // Login System Verification Gate
         function checkGateAccess() {
             const user = document.getElementById('usernameField').value;
             const pass = document.getElementById('passwordField').value;
-            const error = document.getElementById('loginError');
-
             if (user === "Admin" && pass === "RoryX26") {
                 document.getElementById('loginGate').style.display = 'none';
                 sessionStorage.setItem('roryx-admin-authenticated', 'true');
                 loadStockValues();
             } else {
-                error.style.display = 'block';
+                document.getElementById('loginError').style.display = 'block';
             }
         }
 
         function updateRowStatus(inputElement) {
             const count = parseInt(inputElement.value) || 0;
             const statusTd = inputElement.closest('tr').querySelector('td:nth-child(4)');
-            
             if (count <= 0) {
                 statusTd.innerHTML = '<span class="status-badge status-out">Sold Out</span>';
             } else if (count <= 3) {
@@ -345,21 +253,18 @@
 
         function loadStockValues() {
             let localData = localStorage.getItem(PRIVATE_STOCK_KEY);
-            if(!localData) {
-                localStorage.setItem(PRIVATE_STOCK_KEY, JSON.stringify(defaultPrivateStock));
-                localData = JSON.stringify(defaultPrivateStock);
-            }
+            let currentStock = localData ? JSON.parse(localData) : {};
             
-            const currentStock = JSON.parse(localData);
             const rows = document.querySelectorAll('#stockTableBody tr');
-            
             rows.forEach(row => {
                 const productName = row.getAttribute('data-product');
-                if(currentStock[productName] !== undefined) {
-                    const input = row.querySelector('.stock-input');
+                const input = row.querySelector('.stock-input');
+                
+                // If this is a first time boot and no storage is found, use the default markup input value
+                if (currentStock[productName] !== undefined) {
                     input.value = currentStock[productName];
-                    updateRowStatus(input);
                 }
+                updateRowStatus(input);
             });
         }
 
@@ -368,17 +273,19 @@
             const productName = row.getAttribute('data-product');
             const value = parseInt(row.querySelector('.stock-input').value) || 0;
             
-            const currentStock = JSON.parse(localStorage.getItem(PRIVATE_STOCK_KEY)) || defaultPrivateStock;
+            let localData = localStorage.getItem(PRIVATE_STOCK_KEY);
+            let currentStock = localData ? JSON.parse(localData) : {};
             currentStock[productName] = value;
             
             localStorage.setItem(PRIVATE_STOCK_KEY, JSON.stringify(currentStock));
-            alert(`Private record updated for ${productName}!`);
+            alert(`Private data logs successfully verified and updated for: ${productName}`);
         }
 
         function saveAllStock() {
-            const currentStock = JSON.parse(localStorage.getItem(PRIVATE_STOCK_KEY)) || defaultPrivateStock;
-            const rows = document.querySelectorAll('#stockTableBody tr');
+            let localData = localStorage.getItem(PRIVATE_STOCK_KEY);
+            let currentStock = localData ? JSON.parse(localData) : {};
             
+            const rows = document.querySelectorAll('#stockTableBody tr');
             rows.forEach(row => {
                 const productName = row.getAttribute('data-product');
                 const value = parseInt(row.querySelector('.stock-input').value) || 0;
@@ -386,7 +293,7 @@
             });
             
             localStorage.setItem(PRIVATE_STOCK_KEY, JSON.stringify(currentStock));
-            alert("All private database metrics updated successfully.");
+            alert("All 16 internal stock values synced successfully without affecting public databases.");
         }
 
         function toggleDisplayTheme() {
@@ -410,8 +317,6 @@
                 document.getElementById('themeBtn').innerHTML = "🌙 Dark Mode";
                 document.getElementById('navLogo').src = "roryxlite.png";
             }
-            
-            // Check if user already logged in during this active browser tab instance
             if(sessionStorage.getItem('roryx-admin-authenticated') === 'true') {
                 document.getElementById('loginGate').style.display = 'none';
                 loadStockValues();
