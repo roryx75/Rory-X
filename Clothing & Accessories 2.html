@@ -13,11 +13,11 @@
             nav ul { gap: 15px; justify-content: center; }
             nav a { font-size: 12px; }
             .nav-spacer { display: none; }
-            .page-wrapper { margin-top: 180px; width: 90%; }
+            .page-wrapper { margin-top: 220px; width: 90%; }
             .product-grid { grid-template-columns: 1fr; gap: 20px; }
             .product-card { padding: 40px 20px; border-radius: 30px; }
             .product-card img, .slider-container { height: 200px; }
-            .nav-right-container { margin-top: 5px; justify-content: center; }
+            .nav-right-container { margin-top: 5px; justify-content: center; flex-wrap: wrap; }
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
@@ -93,8 +93,8 @@
             opacity: 1;
         }
 
-        /* Theme Toggle Button Style */
-        .theme-toggle-btn {
+        /* Theme & Cart Button Styles */
+        .theme-toggle-btn, .cart-btn {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -107,10 +107,20 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
-        .theme-toggle-btn:hover {
+        .theme-toggle-btn:hover, .cart-btn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.03);
+        }
+        
+        .cart-btn {
+            background: rgba(52, 199, 89, 0.2);
+            border-color: rgba(52, 199, 89, 0.4);
+            color: #34c759;
+        }
+        .cart-btn:hover {
+            background: rgba(52, 199, 89, 0.3);
         }
 
         /* --- LIGHT MODE RULES OVERRIDES --- */
@@ -217,6 +227,7 @@
             background-color: #34c759; color: white; padding: 16px 50px; 
             border-radius: 14px; text-decoration: none; font-weight: 600; 
             font-size: 17px; transition: 0.3s; align-self: center; width: 100%; text-align: center; display: inline-block;
+            cursor: pointer; border: none;
         }
         .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
         
@@ -265,13 +276,14 @@
                     <a href="privatestock.html" style="border-top: 1px solid rgba(255,255,255,0.06);">View Private Stock</a>
                 </div>
             </div>
+            <a href="cart.html" class="cart-btn" id="cartBtn">🛒 Cart (0)</a>
             <button class="theme-toggle-btn" onclick="toggleDisplayTheme()" id="themeBtn">☀️ Light Mode</button>
         </div>
     </nav>
     
     <div class="page-wrapper">
         <div class="product-grid">
-            <div class="product-card" data-product-name="Rory X Unisex Joggers (Black)" data-base-url="pay.html?item=Rory%20X%20Unisex%20Joggers%20(Black)&price=15.00">
+            <div class="product-card" data-product-name="Rory X Unisex Joggers (Black)" data-price="15.00" data-img="Joggers (Black).png">
                 <div>
                     <img src="Joggers (Black).png" alt="Rory X Unisex Joggers (Black)">
                     <h3>Rory X Unisex Joggers (Black)</h3>
@@ -279,11 +291,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Unisex%20Joggers%20(Black)&price=15.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Unisex Joggers (Black)')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Unisex Joggers (White)" data-base-url="pay.html?item=Rory%20X%20Unisex%20Joggers%20(White)&price=15.00">
+            <div class="product-card" data-product-name="Rory X Unisex Joggers (White)" data-price="15.00" data-img="Joggers (White).png">
                 <div>
                     <img src="Joggers (White).png" alt="Rory X Unisex Joggers (White)">
                     <h3>Rory X Unisex Joggers (White)</h3>
@@ -291,11 +303,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Unisex%20Joggers%20(White)&price=15.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Unisex Joggers (White)')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Socks (Black)" data-base-url="pay.html?item=Rory%20X%20Socks%20(Black)&price=5.00">
+            <div class="product-card" data-product-name="Rory X Socks (Black)" data-price="5.00" data-img="Socks (Black).png">
                 <div>
                     <img src="Socks (Black).png" alt="Rory X Socks (Black)">
                     <h3>Rory X Socks (Black)</h3>
@@ -303,11 +315,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Socks%20(Black)&price=5.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Socks (Black)')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Socks (White)" data-base-url="pay.html?item=Rory%20X%20Socks%20(White)&price=5.00">
+            <div class="product-card" data-product-name="Rory X Socks (White)" data-price="5.00" data-img="Socks (White).png">
                 <div>
                     <img src="Socks (White).png" alt="Rory X Socks (White)">
                     <h3>Rory X Socks (White)</h3>
@@ -315,11 +327,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Socks%20(White)&price=5.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Socks (White)')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
             
-            <div class="product-card" data-product-name="Rory X Sticker" data-base-url="pay.html?item=Rory%20X%20Sticker&price=3.00">
+            <div class="product-card" data-product-name="Rory X Sticker" data-price="3.00" data-img="RoryXSticker.png">
                 <div>
                     <img src="RoryXSticker.png" alt="Rory X Sticker">
                     <h3>Rory X Sticker</h3>
@@ -327,11 +339,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Sticker&price=3.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Sticker')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Hockey Puck" data-base-url="pay.html?item=Rory%20X%20Hockey%20Puck&price=25.00">
+            <div class="product-card" data-product-name="Rory X Hockey Puck" data-price="25.00" data-img="Hockey.png">
                 <div>
                     <img src="Hockey.png" alt="Rory X Hockey Puck">
                     <h3>Rory X Hockey Puck</h3>
@@ -339,11 +351,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Hockey%20Puck&price=25.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Hockey Puck')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Medium Ring" data-base-url="pay.html?item=Rory%20X%20Medium%20Ring&price=3.00">
+            <div class="product-card" data-product-name="Rory X Medium Ring" data-price="3.00" data-img="ring.png">
                 <div>
                     <img src="ring.png" alt="Rory X Medium Ring">
                     <h3>Rory X Medium Ring</h3>
@@ -351,11 +363,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Medium%20Ring&price=3.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Medium Ring')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-             <div class="product-card" data-product-name="Rory X Shower Curtain" data-base-url="pay.html?item=Rory%20X%20Shower%20Curtains&price=30.00">
+             <div class="product-card" data-product-name="Rory X Shower Curtain" data-price="30.00" data-img="Shower.png">
                 <div>
                     <img src="Shower.png" alt="Rory X Shower Curtain">
                     <h3>Rory X Shower Curtain</h3>
@@ -363,11 +375,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Shower%20Curtains&price=30.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Shower Curtain')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X 10oz glass" data-base-url="pay.html?item=Rory%20X%2010oz%20glass&price=10.00">
+            <div class="product-card" data-product-name="Rory X 10oz glass" data-price="10.00" data-img="10ozglass.png">
                 <div>
                     <img src="10ozglass.png" alt="Rory X 10oz glass">
                     <h3>Rory X 10oz glass</h3>
@@ -375,11 +387,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%2010oz%20glass&price=10.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X 10oz glass')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Mug (3 Designs)" data-base-url="pay.html?item=Rory%20X%20Mug%20(3%20Designs)&price=7.00">
+            <div class="product-card" data-product-name="Rory X Mug (3 Designs)" data-price="7.00" data-img="mug 1.png">
                 <div>
                     <div class="slider-container">
                         <div class="slides" id="mugSlider">
@@ -398,7 +410,7 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Mug%20(3%20Designs)&price=7.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Mug (3 Designs)')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
         </div>
@@ -473,6 +485,48 @@
 
         startAutoSlide();
 
+        // --- Shopping Cart Engine Logic ---
+        function getCart() {
+            return JSON.parse(localStorage.getItem('roryx-cart')) || [];
+        }
+
+        function updateCartBadge() {
+            const cart = getCart();
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartBtn').innerText = `🛒 Cart (${totalCount})`;
+        }
+
+        function addToCart(productName) {
+            const card = document.querySelector(`[data-product-name="${productName}"]`);
+            if (!card) return;
+
+            const btn = card.querySelector('.buy-now-btn');
+            if (btn.classList.contains('disabled')) return; // Blocks clicks if sold out
+
+            const price = parseFloat(card.getAttribute('data-price'));
+            const img = card.getAttribute('data-img');
+            
+            let cart = getCart();
+            const existingItem = cart.find(item => item.name === productName);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: price, img: img, quantity: 1 });
+            }
+
+            localStorage.setItem('roryx-cart', JSON.stringify(cart));
+            updateCartBadge();
+            
+            // UI feedback animation
+            btn.innerText = "Added! ✓";
+            btn.style.backgroundColor = "#27ae60";
+            setTimeout(() => {
+                btn.innerText = "Add to Cart";
+                btn.style.backgroundColor = "";
+            }, 1000);
+        }
+
         // --- Live Tracker Sync Engine ---
         async function fetchLiveStock() {
             try {
@@ -483,7 +537,6 @@
                 const containers = document.querySelectorAll('[data-product-name]');
                 containers.forEach(container => {
                     const prodName = container.getAttribute('data-product-name');
-                    const baseUrl = container.getAttribute('data-base-url');
                     const btn = container.querySelector('.buy-now-btn');
                     const tagBox = container.querySelector('.stock-tag-container');
 
@@ -494,20 +547,14 @@
                             tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
                             btn.innerText = "Sold Out";
                             btn.classList.add('disabled');
-                            btn.setAttribute('href', '#');
-                            btn.onclick = (e) => e.preventDefault();
                         } else if (count <= 3) {
                             tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
-                            btn.innerText = "Buy Now";
+                            btn.innerText = "Add to Cart";
                             btn.classList.remove('disabled');
-                            btn.setAttribute('href', baseUrl);
-                            btn.onclick = null;
                         } else {
                             tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
-                            btn.innerText = "Buy Now";
+                            btn.innerText = "Add to Cart";
                             btn.classList.remove('disabled');
-                            btn.setAttribute('href', baseUrl);
-                            btn.onclick = null;
                         }
                     }
                 });
@@ -548,6 +595,7 @@
                 document.getElementById('navLogo').src = "RoryX.png";
             }
 
+            updateCartBadge();
             fetchLiveStock();
             setInterval(fetchLiveStock, 5000);
         });
