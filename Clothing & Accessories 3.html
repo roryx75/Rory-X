@@ -8,22 +8,22 @@
     <style>
         /* Mobile Fix */
         @media (max-width: 768px) {
-            nav { padding: 0 20px; height: 80px; justify-content: center; }
-            .nav-logo { height: 60px; position: static; margin-right: auto; }
-            nav ul { gap: 15px; position: static; transform: none; }
+            nav { padding: 15px 20px; height: auto; display: flex !important; flex-direction: column; gap: 10px; }
+            .nav-logo { height: 60px; }
+            nav ul { gap: 15px; justify-content: center; }
             nav a { font-size: 12px; }
-            .nav-actions { position: static; }
-            .page-wrapper { margin-top: 120px; width: 90%; }
+            .page-wrapper { margin-top: 220px; width: 90%; }
             .product-grid { grid-template-columns: 1fr; gap: 20px; }
             .product-card { padding: 40px 20px; border-radius: 30px; }
             .product-card img { height: 200px; }
+            .nav-actions { margin-top: 5px; justify-content: center; flex-wrap: wrap; position: static; }
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
         body { background-color: #000; color: #f5f5f7; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: background-color 0.3s ease, color 0.3s ease; }
         
         /* Button & Interactive Element Base Styles */
-        .theme-toggle-btn {
+        .theme-toggle-btn, .cart-btn {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -36,10 +36,20 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
-        .theme-toggle-btn:hover {
+        .theme-toggle-btn:hover, .cart-btn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.03);
+        }
+
+        .cart-btn {
+            background: rgba(52, 199, 89, 0.2);
+            border-color: rgba(52, 199, 89, 0.4);
+            color: #34c759;
+        }
+        .cart-btn:hover {
+            background: rgba(52, 199, 89, 0.3);
         }
 
         /* --- NEW LIVE STOCK DROPDOWN INTERFACE --- */
@@ -80,6 +90,9 @@
             z-index: 10000;
             overflow: hidden;
         }
+        .dropdown-menu.active {
+            display: block;
+        }
         .dropdown-menu a {
             display: block;
             color: #f5f5f7;
@@ -97,10 +110,6 @@
         }
         .dropdown-menu a:not(:last-child) {
             border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
-        }
-        /* Reveal dropdown container on hover */
-        .dropdown:hover .dropdown-menu {
-            display: block;
         }
 
         /* --- LIGHT MODE RULES OVERRIDES --- */
@@ -218,6 +227,7 @@
             background-color: #34c759; color: white; padding: 16px 50px; 
             border-radius: 14px; text-decoration: none; font-weight: 600; 
             font-size: 17px; transition: 0.3s; align-self: center; width: 100%; text-align: center; display: inline-block;
+            cursor: pointer; border: none;
         }
         .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
         .buy-now-btn.disabled { 
@@ -252,19 +262,20 @@
 
         <div class="nav-actions">
             <div class="dropdown">
-                <button class="stock-trigger-btn">📈 Live Stock</button>
-                <div class="dropdown-menu">
+                <button class="stock-trigger-btn" id="stockBtn" onclick="toggleStockMenu(event)">📈 Live Stock</button>
+                <div class="dropdown-menu" id="stockDropdown">
                     <a href="admin.html">View Public Stock</a>
                     <a href="privatestock.html">View Private Stock</a>
                 </div>
             </div>
+            <a href="cart.html" class="cart-btn" id="cartBtn">🛒 Cart (0)</a>
             <button class="theme-toggle-btn" onclick="toggleDisplayTheme()" id="themeBtn">☀️ Light Mode</button>
         </div>
     </nav>
 
     <div class="page-wrapper">
         <div class="product-grid">
-            <div class="product-card" data-product-name="Rory X Hoodie" data-base-url="pay.html?item=Rory%20X%20Hoodie&price=15.00">
+            <div class="product-card" data-product-name="Rory X Hoodie" data-price="15.00" data-img="Hoodie1,2.png">
                 <div>
                     <img src="Hoodie1,2.png" alt="Rory X Hoodie">
                     <h3>Rory X Hoodie</h3>
@@ -272,11 +283,11 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Hoodie&price=15.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Hoodie')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-name="Rory X Jewelry Box" data-base-url="pay.html?item=Rory%20X%20Jewelry%20Box&price=15.00">
+            <div class="product-card" data-product-name="Rory X Jewelry Box" data-price="15.00" data-img="Jewelry Box.png">
                 <div>
                     <img src="Jewelry Box.png" alt="Rory X Jewelry Box">
                     <h3>Rory X Jewelry Box</h3>
@@ -284,7 +295,7 @@
                 </div>
                 <div style="width: 100%;">
                     <div class="stock-tag-container"></div>
-                    <a href="pay.html?item=Rory%20X%20Jewelry%20Box&price=15.00" class="buy-now-btn">Buy Now</a>
+                    <button onclick="addToCart('Rory X Jewelry Box')" class="buy-now-btn">Add to Cart</button>
                 </div>
             </div>
         </div> 
@@ -315,6 +326,62 @@
     </footer>
 
     <script>
+        // --- Navigation Dropdown Control ---
+        function toggleStockMenu(event) {
+            event.stopPropagation();
+            document.getElementById('stockDropdown').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('stockDropdown');
+            const button = document.getElementById('stockBtn');
+            if (dropdown && !button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // --- Shopping Cart Engine Logic ---
+        function getCart() {
+            return JSON.parse(localStorage.getItem('roryx-cart')) || [];
+        }
+
+        function updateCartBadge() {
+            const cart = getCart();
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartBtn').innerText = `🛒 Cart (${totalCount})`;
+        }
+
+        function addToCart(productName) {
+            const card = document.querySelector(`[data-product-name="${productName}"]`);
+            if (!card) return;
+
+            const btn = card.querySelector('.buy-now-btn');
+            if (btn.classList.contains('disabled')) return;
+
+            const price = parseFloat(card.getAttribute('data-price'));
+            const img = card.getAttribute('data-img');
+            
+            let cart = getCart();
+            const existingItem = cart.find(item => item.name === productName);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: productName, price: price, img: img, quantity: 1 });
+            }
+
+            localStorage.setItem('roryx-cart', JSON.stringify(cart));
+            updateCartBadge();
+            
+            // UI feedback response
+            btn.innerText = "Added! ✓";
+            btn.style.backgroundColor = "#27ae60";
+            setTimeout(() => {
+                btn.innerText = "Add to Cart";
+                btn.style.backgroundColor = "";
+            }, 1000);
+        }
+
         // --- Live Database Synchronizer Logic ---
         async function fetchLiveStock() {
             try {
@@ -325,7 +392,6 @@
                 const containers = document.querySelectorAll('[data-product-name]');
                 containers.forEach(container => {
                     const prodName = container.getAttribute('data-product-name');
-                    const baseUrl = container.getAttribute('data-base-url');
                     const btn = container.querySelector('.buy-now-btn');
                     const tagBox = container.querySelector('.stock-tag-container');
 
@@ -336,20 +402,14 @@
                             tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
                             btn.innerText = "Sold Out";
                             btn.classList.add('disabled');
-                            btn.setAttribute('href', '#');
-                            btn.onclick = (e) => e.preventDefault();
                         } else if (count <= 3) {
                             tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
-                            btn.innerText = "Buy Now";
+                            btn.innerText = "Add to Cart";
                             btn.classList.remove('disabled');
-                            btn.setAttribute('href', baseUrl);
-                            btn.onclick = null;
                         } else {
                             tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
-                            btn.innerText = "Buy Now";
+                            btn.innerText = "Add to Cart";
                             btn.classList.remove('disabled');
-                            btn.setAttribute('href', baseUrl);
-                            btn.onclick = null;
                         }
                     }
                 });
@@ -377,7 +437,7 @@
             }
         }
 
-        // Initialize script execution and check every 5 seconds
+        // Initialize script execution and preference tracking
         document.addEventListener("DOMContentLoaded", () => {
             const savedTheme = localStorage.getItem('roryx-theme');
             if(savedTheme === 'light') {
@@ -386,6 +446,7 @@
                 document.getElementById('navLogo').src = "roryxlite.png";
             }
 
+            updateCartBadge();
             fetchLiveStock();
             setInterval(fetchLiveStock, 5000);
         });
