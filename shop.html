@@ -162,23 +162,21 @@
     <script>
         // Main function to send standard items to payment page
         function goToPay(name, price) {
-            // encodes the name (e.g. replaces spaces with %20) and redirects
             window.location.href = `pay.html?item=${encodeURIComponent(name)}&price=${price}`;
         }
 
-        // Updates the label on the shop page when dropdown changes
+        // Updates the text label when the air size changes
         function updateAirPrice() {
             const price = document.getElementById('airSize').value;
             document.getElementById('airPriceLabel').innerText = "£" + price;
         }
 
-        // Special function for Air to include the selected size in the name
+        // Handles gathering custom dropdown properties for Air
         function buyAir() {
             const dropdown = document.getElementById('airSize');
             const price = dropdown.value;
             const sizeLabel = dropdown.options[dropdown.selectedIndex].text.split(' - ')[0];
             
-            // Sends name as "Air (Small)" etc.
             window.location.href = `pay.html?item=${encodeURIComponent('Air (' + sizeLabel + ')')}&price=${price}`;
         }
     </script>
