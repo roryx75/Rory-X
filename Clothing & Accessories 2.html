@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clothing & Accessories - Page 2 | Rory X</title>
-    <link rel="icon" type="image/png" href="RoryX.png">
+    <title>Clothing & Accessories | Rory X</title>
+    <link class="icon" type="image/png" href="RoryX.png">
     <style>
         /* Mobile Fix */
         @media (max-width: 768px) {
@@ -13,11 +13,12 @@
             nav ul { gap: 15px; justify-content: center; }
             nav a { font-size: 12px; }
             .nav-spacer { display: none; }
-            .page-wrapper { margin-top: 220px; width: 90%; }
+            .page-wrapper { margin-top: 180px; width: 90%; }
             .product-grid { grid-template-columns: 1fr; gap: 20px; }
+            .page-heading h1 { font-size: 32px; }
             .product-card { padding: 40px 20px; border-radius: 30px; }
-            .product-card img, .slider-container { height: 200px; }
-            .nav-right-container { margin-top: 5px; justify-content: center; flex-wrap: wrap; }
+            .product-card img { height: 200px; }
+            .nav-right-container { margin-top: 5px; justify-content: center; }
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
@@ -36,7 +37,7 @@
             display: inline-block;
         }
 
-        /* Stock Button matching Page 1 engine rules */
+        /* Stock Button matching Theme Toggle styling rules */
         .stock-btn {
             background: rgba(52, 199, 89, 0.15);
             color: #34c759;
@@ -93,8 +94,8 @@
             opacity: 1;
         }
 
-        /* Theme & Cart Button Styles */
-        .theme-toggle-btn, .cart-btn {
+        /* Theme Toggle Button Style */
+        .theme-toggle-btn {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -107,20 +108,10 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            text-decoration: none;
         }
-        .theme-toggle-btn:hover, .cart-btn:hover {
+        .theme-toggle-btn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.03);
-        }
-        
-        .cart-btn {
-            background: rgba(52, 199, 89, 0.2);
-            border-color: rgba(52, 199, 89, 0.4);
-            color: #34c759;
-        }
-        .cart-btn:hover {
-            background: rgba(52, 199, 89, 0.3);
         }
 
         /* --- LIGHT MODE RULES OVERRIDES --- */
@@ -191,7 +182,7 @@
             color: #ffffff !important;
         }
 
-        /* Centered 3-Column Grid Navigation */
+        /* Centered Nav with 3-Column Grid */
         nav { 
             position: fixed; top: 0; width: 100%; height: 110px; 
             background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -205,7 +196,7 @@
         nav a:hover { opacity: 1; }
 
         .page-wrapper { margin-top: 150px; width: 95%; max-width: 1200px; display: flex; flex-direction: column; gap: 40px; margin-bottom: 80px; }
-        
+         
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 40px; }
         .product-card { 
             background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); 
@@ -216,7 +207,7 @@
         .product-card h3 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
         .product-card span { font-size: 18px; color: #a1a1a6; margin-bottom: 15px; display: block; transition: color 0.3s ease; }
 
-        /* Stock Counter Styles */
+        /* Stock Counter Engine UI Styles */
         .stock-tag-container { min-height: 25px; }
         .stock-tag { font-size: 13px; font-weight: 600; margin-bottom: 20px; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
         .in-stock { color: #34c759; background: rgba(52, 199, 89, 0.1); }
@@ -227,10 +218,9 @@
             background-color: #34c759; color: white; padding: 16px 50px; 
             border-radius: 14px; text-decoration: none; font-weight: 600; 
             font-size: 17px; transition: 0.3s; align-self: center; width: 100%; text-align: center; display: inline-block;
-            cursor: pointer; border: none;
         }
         .buy-now-btn:hover { background-color: #2da44e; transform: scale(1.03); }
-        
+         
         .buy-now-btn.disabled { 
             background-color: #ffffff !important; 
             color: #1c1c1e !important; 
@@ -239,15 +229,7 @@
             box-shadow: none !important; 
         }
 
-        /* Slider Styles */
-        .slider-container { position: relative; width: 100%; height: 260px; margin-bottom: 10px; overflow: hidden; border-radius: 25px; }
-        .slides { display: flex; width: 300%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        .slides img { width: 33.333%; height: 100%; object-fit: contain; margin-bottom: 0; }
-        .dot-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 25px; }
-        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 50%; cursor: pointer; transition: 0.3s; }
-        .dot.active { background: #34c759; transform: scale(1.3); }
-
-        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 60px; align-items: center; }
+        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 60px; align-items: center; width: 100%; }
         .page-link { background: rgba(255,255,255,0.08); color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: background 0.3s ease, color 0.3s ease; }
         .page-link.active { background: #34c759; }
 
@@ -276,12 +258,15 @@
                     <a href="privatestock.html" style="border-top: 1px solid rgba(255,255,255,0.06);">View Private Stock</a>
                 </div>
             </div>
-            <a href="cart.html" class="cart-btn" id="cartBtn">🛒 Cart (0)</a>
             <button class="theme-toggle-btn" onclick="toggleDisplayTheme()" id="themeBtn">☀️ Light Mode</button>
         </div>
     </nav>
-    
+
     <div class="page-wrapper">
+        <div class="page-heading">
+            <h1>Clothing &amp; Accessories</h1>
+            <p>Rory X clothing, accessories and more.</p>
+        </div>
         <div class="product-grid">
             <div class="product-card" data-product-name="Rory X Unisex Joggers (Black)" data-price="15.00" data-img="Joggers (Black).png">
                 <div>
@@ -456,87 +441,17 @@
             }
         });
 
-        // --- Image Slider Logic ---
-        let currentIndex = 0;
-        const totalSlides = 3;
-        let slideInterval;
-
-        function moveSlider(index) {
-            const slider = document.getElementById('mugSlider');
-            const dots = document.querySelectorAll('.dot');
-            if (slider) {
-                slider.style.transform = `translateX(-${index * 33.333}%)`;
-                dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-                currentIndex = index;
-            }
-        }
-
-        function startAutoSlide() {
-            slideInterval = setInterval(() => {
-                moveSlider((currentIndex + 1) % totalSlides);
-            }, 2000);
-        }
-
-        function manualMove(index) {
-            clearInterval(slideInterval);
-            moveSlider(index);
-            startAutoSlide();
-        }
-
-        startAutoSlide();
-
-        // --- Shopping Cart Engine Logic ---
-        function getCart() {
-            return JSON.parse(localStorage.getItem('roryx-cart')) || [];
-        }
-
-        function updateCartBadge() {
-            const cart = getCart();
-            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cartBtn').innerText = `🛒 Cart (${totalCount})`;
-        }
-
-        function addToCart(productName) {
-            const card = document.querySelector(`[data-product-name="${productName}"]`);
-            if (!card) return;
-
-            const btn = card.querySelector('.buy-now-btn');
-            if (btn.classList.contains('disabled')) return; // Blocks clicks if sold out
-
-            const price = parseFloat(card.getAttribute('data-price'));
-            const img = card.getAttribute('data-img');
-            
-            let cart = getCart();
-            const existingItem = cart.find(item => item.name === productName);
-
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({ name: productName, price: price, img: img, quantity: 1 });
-            }
-
-            localStorage.setItem('roryx-cart', JSON.stringify(cart));
-            updateCartBadge();
-            
-            // UI feedback animation
-            btn.innerText = "Added! ✓";
-            btn.style.backgroundColor = "#27ae60";
-            setTimeout(() => {
-                btn.innerText = "Add to Cart";
-                btn.style.backgroundColor = "";
-            }, 1000);
-        }
-
-        // --- Live Tracker Sync Engine ---
+        // Real-Time Database Sync Engine 
         async function fetchLiveStock() {
             try {
                 const response = await fetch('/api/get-stock?t=' + Date.now());
-                if (!response.ok) throw new Error('Database unreachable');
+                if (!response.ok) throw new Error('Network issue');
                 const liveStock = await response.json();
                 
                 const containers = document.querySelectorAll('[data-product-name]');
                 containers.forEach(container => {
                     const prodName = container.getAttribute('data-product-name');
+                    const baseUrl = container.getAttribute('data-base-url');
                     const btn = container.querySelector('.buy-now-btn');
                     const tagBox = container.querySelector('.stock-tag-container');
 
@@ -547,19 +462,25 @@
                             tagBox.innerHTML = `<span class="stock-tag out-of-stock">Sold Out</span>`;
                             btn.innerText = "Sold Out";
                             btn.classList.add('disabled');
+                            btn.setAttribute('href', '#');
+                            btn.onclick = (e) => e.preventDefault();
                         } else if (count <= 3) {
                             tagBox.innerHTML = `<span class="stock-tag low-stock">Running Low: ${count} Left</span>`;
-                            btn.innerText = "Add to Cart";
+                            btn.innerText = "Buy Now";
                             btn.classList.remove('disabled');
+                            btn.setAttribute('href', baseUrl);
+                            btn.onclick = null;
                         } else {
                             tagBox.innerHTML = `<span class="stock-tag in-stock">${count} In Stock</span>`;
-                            btn.innerText = "Add to Cart";
+                            btn.innerText = "Buy Now";
                             btn.classList.remove('disabled');
+                            btn.setAttribute('href', baseUrl);
+                            btn.onclick = null;
                         }
                     }
                 });
             } catch (err) {
-                console.error("Live stock polling failed, retrying in next loop:", err);
+                console.error("Live sync failed, waiting for next interval:", err);
             }
         }
 
@@ -571,7 +492,7 @@
             
             body.classList.toggle('light-mode');
             
-            if(body.classList.contains('light-mode')) {
+            if (body.classList.contains('light-mode')) {
                 btn.innerHTML = "🌙 Dark Mode";
                 logo.src = "roryxlite.png";
                 localStorage.setItem('roryx-theme', 'light');
@@ -582,10 +503,10 @@
             }
         }
 
-        // Initialize persistent user preferences
+        // Initialize cycles and apply persistent client theme
         document.addEventListener("DOMContentLoaded", () => {
             const savedTheme = localStorage.getItem('roryx-theme');
-            if(savedTheme === 'light') {
+            if (savedTheme === 'light') {
                 document.body.classList.add('light-mode');
                 document.getElementById('themeBtn').innerHTML = "🌙 Dark Mode";
                 document.getElementById('navLogo').src = "roryxlite.png";
@@ -595,7 +516,6 @@
                 document.getElementById('navLogo').src = "RoryX.png";
             }
 
-            updateCartBadge();
             fetchLiveStock();
             setInterval(fetchLiveStock, 5000);
         });
